@@ -42,6 +42,13 @@ instance_dir = instances
 
 打开 `PowerShell` 或 `Terminal` 并进入 `omnivirt.exe` 所在的目录，准备进行对应的操作。
 
+### Windows下退出omnivirtd后台进程
+
+当omnivirtd.exe运行后，会在操作系统右下角托盘区域生成omnivirtd托盘图标：
+
+<img src="./etc/images/tray-icon.png" width="10%" height="10%"/>
+鼠标右键点击托盘图标，并选择 `Exit OmniVirt` 即可退出omnivirtd后台进程。
+
 ### 镜像操作
 
 1. 获取可用镜像列表：
