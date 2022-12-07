@@ -15,6 +15,7 @@
 
 ### Windows下的安装与运行
 **OmniVirt**当前支持Windows11/10，前往[OmniVirt最新版下载][1]下载Windows版软件包并解压到期望的位置。
+右键点击 `config-env.bat` 并选择**以管理员身份运行**，该脚本将进行环境变量相关的配置，将当前目录添加到系统环境变量 `path`中，如果使用者掌握如何配置环境变量，或配置脚本出现问题，也可以进行手动配置，将当前脚本所在目录及 `qemu-img` 子目录添加至系统环境变量 `path` 中。
 
 **OmniVirt**在Windows上运行需要对接 `Hyper-V` 虚拟化后端，`Hyper-V` 是 Microsoft 的硬件虚拟化产品，可以为Windows上的虚拟机提供更为出色的性能。在运行**OmniVirt**前，请先检查你的系统是否开启了 `Hyper-V`，具体检查及开启方法请参考[Hyper-V开启指导][2]或其他网络资源。
 
@@ -40,7 +41,7 @@ instance_dir = instances
 
 配置完成后请右键点击omnivirtd.exe，选择以管理员身份运行，点击后omnivird.exe将以守护进程的形式在后台运行。
 
-打开 `PowerShell` 或 `Terminal` 并进入 `omnivirt.exe` 所在的目录，准备进行对应的操作。
+打开 `PowerShell` 或 `Terminal` ，准备进行对应的操作。
 
 ### Windows下退出omnivirtd后台进程
 
