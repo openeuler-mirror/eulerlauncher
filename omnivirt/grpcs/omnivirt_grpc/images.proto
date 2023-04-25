@@ -1,0 +1,46 @@
+syntax = "proto3";
+package omnivirt;
+
+option cc_generic_services = true;
+
+
+service ImageGrpcService {
+    rpc list_images (ListImageRequest) returns (ListImageResponse) {}
+    rpc download_image (DownloadImageRequest) returns (GeneralImageResponse) {}
+    rpc load_image (LoadImageRequest) returns (GeneralImageResponse) {}
+    rpc delete_image (DeleteImageRequest) returns (GeneralImageResponse) {}
+}
+
+
+message Image {
+    string name = 1;
+    string location = 2;
+    string status = 3;
+}
+
+
+message ListImageRequest {
+}
+
+
+message ListImageResponse {
+    repeated Image images = 1;
+}
+
+message DownloadImageRequest {
+    string name = 1;
+}
+
+message LoadImageRequest {
+    string name = 1;
+    string path = 2;
+}
+
+message DeleteImageRequest {
+    string name = 1;
+}
+
+message GeneralImageResponse {
+    uint32 ret = 1;
+	string msg = 2;
+}
