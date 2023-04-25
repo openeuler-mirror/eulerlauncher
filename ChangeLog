@@ -1,0 +1,6 @@
+CHANGES
+=======
+
+* fix requirement bugs on urllib3 and libvirt-python
+* Make the tool work on Mac
+* Initial Commit

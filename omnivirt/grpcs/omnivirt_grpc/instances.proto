@@ -1,0 +1,48 @@
+syntax = "proto3";
+package omnivirt;
+
+option cc_generic_services = true;
+
+
+service InstanceGrpcService {
+    rpc list_instances (ListInstancesRequest) returns (ListInstancesResponse) {}
+    rpc create_instance (CreateInstanceRequest) returns (CreateInstanceResponse) {}
+    rpc delete_instance (DeleteInstanceRequest) returns (DeleteInstanceResponse) {}
+}
+
+
+message Instance {
+    string name = 1;
+    string image = 2;
+    string vm_state = 3;
+    string ip_address = 4;
+}
+
+
+message ListInstancesRequest {
+}
+
+
+message ListInstancesResponse {
+    repeated Instance instances = 1;
+}
+
+message CreateInstanceRequest {
+    string name = 1;
+    string image = 2;
+}
+
+message CreateInstanceResponse {
+    uint32 ret = 1;
+    string msg = 2;
+    optional Instance instance = 3;
+}
+
+message DeleteInstanceRequest {
+    string name = 1;
+}
+
+message DeleteInstanceResponse {
+    uint32 ret = 1;
+    string msg = 2;
+}
