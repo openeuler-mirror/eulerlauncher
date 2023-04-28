@@ -1,10 +1,10 @@
-# 在Windows下安装与运行OmniVirt
-**OmniVirt**当前支持Windows11/10，前往[OmniVirt最新版下载][1]下载Windows版软件包并解压到期望的位置。
+# 在Windows下安装与运行EulerLauncher
+**EulerLauncher**当前支持Windows11/10，前往[EulerLauncher最新版下载][1]下载Windows版软件包并解压到期望的位置。
 右键点击 `config-env.bat` 并选择**以管理员身份运行**，该脚本将进行环境变量相关的配置，将当前目录添加到系统环境变量 `path`中，如果使用者掌握如何配置环境变量，或配置脚本出现问题，也可以进行手动配置，将当前脚本所在目录及 `qemu-img` 子目录添加至系统环境变量 `path` 中。
 
-**OmniVirt**在Windows上运行需要对接 `Hyper-V` 虚拟化后端，`Hyper-V` 是 Microsoft 的硬件虚拟化产品，可以为Windows上的虚拟机提供更为出色的性能。在运行**OmniVirt**前，请先检查你的系统是否开启了 `Hyper-V`，具体检查及开启方法请参考[Hyper-V开启指导][2]或其他网络资源。
+**EulerLauncher**在Windows上运行需要对接 `Hyper-V` 虚拟化后端，`Hyper-V` 是 Microsoft 的硬件虚拟化产品，可以为Windows上的虚拟机提供更为出色的性能。在运行**EulerLauncher**前，请先检查你的系统是否开启了 `Hyper-V`，具体检查及开启方法请参考[Hyper-V开启指导][2]或其他网络资源。
 
-**OmniVirt**解压后包含以下几个部分：
+**EulerLauncher**解压后包含以下几个部分：
 
 - omnivirtd.exe：OmniVirt的主进程，是运行在后台的守护进程，负责与各类虚拟化后端交互，管理虚拟机、容器以及镜像的生命周期，omnivirtd.exe是运行在后台的守护进程。
 - onivirt.exe：OmniVirt的CLI客户端，用户通过该客户端与omnivirtd守护进程交互，对虚拟机、镜像等进行相关操作。
@@ -28,7 +28,7 @@ instance_dir = instances
 
 打开 `PowerShell` 或 `Terminal` ，准备进行对应的操作。
 
-### Windows下退出omnivirtd后台进程
+### Windows下退出EulerLauncherd后台进程
 
 当omnivirtd.exe运行后，会在操作系统右下角托盘区域生成omnivirtd托盘图标：
 
@@ -50,7 +50,7 @@ omnivirt.exe images
 +-----------+----------+--------------+
 ```
 
-**OmniVirt**镜像有两种位置属性：1）远端镜像 2）本地镜像，只有处于本地且状态为 `Ready` 的镜像可以直接用来创建虚拟机，位于远端的镜像需要下载后才能够使用；你也可以加载已经预先下载好的本地镜像到**OmniVirt**中，具体操作方法可以参考接下来的操作指导。
+**EulerLauncher**镜像有两种位置属性：1）远端镜像 2）本地镜像，只有处于本地且状态为 `Ready` 的镜像可以直接用来创建虚拟机，位于远端的镜像需要下载后才能够使用；你也可以加载已经预先下载好的本地镜像到**OmniVirt**中，具体操作方法可以参考接下来的操作指导。
 
 2. 下载远端镜像
 
