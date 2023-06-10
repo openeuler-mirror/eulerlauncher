@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['omnivirt/install.py'],
+    ['eulerlauncher/install.py'],
     pathex=[],
-    binaries=[('dist/omnivirt', './etc')],
-    datas=[('etc/omnivirt.conf', './etc'), ('resources/qemu/edk2-aarch64-code.fd', './etc'), ('resources/qemu/edk2-x86_64-code.fd', './etc')],
+    binaries=[('dist/eulerlauncher', './etc')],
+    datas=[('etc/eulerlauncher.conf', './etc'), ('resources/qemu/edk2-aarch64-code.fd', './etc'), ('resources/qemu/edk2-x86_64-code.fd', './etc')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
