@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['eulerlauncher/cli.py'],
+    ['eulerlauncher/macos-gui.py'],
     pathex=[],
-    binaries=[],
-    datas=[],
+    binaries=[('dist/EulerLauncherd', './bin')],
+    datas=[('etc/eulerlauncher.conf', './etc'), ('etc/images/favicon.png', './etc'), ('resources/qemu/edk2-aarch64-code.fd', './etc'), ('resources/qemu/edk2-x86_64-code.fd', './etc')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -28,17 +28,25 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='eulerlauncher',
+    name='EulerLauncher',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    uac_admin=True,
+    icon=['etc/images/favicon.ico'],
+)
+app = BUNDLE(
+    exe,
+    name='EulerLauncher.app',
+    icon='etc/images/favicon.ico',
+    bundle_identifier=None,
 )

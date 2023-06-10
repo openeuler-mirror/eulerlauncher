@@ -46,25 +46,25 @@ pip3 install -r requirements.txt
 
 EulerLauncher可执行文件包括以下几个部分：
 
-1. EulerLauncherd: omnivirt守护进程，以root权限运行在后台，与调用虚拟化组件(Qemu、HyperV、KVM等)及镜像组件进行相关操作；
-2. EulerLauncher.app: OmniVirt服务端主程序，将omnivirtd及其他相关程序、数据、文件等打包为MacOS APP软件包，便于分发和使用。
-3. EulerLauncher: MacOS可执行文件，OmniVirt客户端CLI工具，用于与服务端交互。
-4. install: MacOS可执行文件，将OmniVirt运行所需配置文件及相关数据文件安装至`Application Support`文件夹。
+1. EulerLauncherd: EulerLauncher守护进程，以root权限运行在后台，与调用虚拟化组件(Qemu、HyperV、KVM等)及镜像组件进行相关操作；
+2. EulerLauncher.app: EulerLauncher服务端主程序，将EulerLauncher及其他相关程序、数据、文件等打包为MacOS APP软件包，便于分发和使用。
+3. EulerLauncher: MacOS可执行文件，EulerLauncher客户端CLI工具，用于与服务端交互。
+4. install: MacOS可执行文件，将EulerLauncher运行所需配置文件及相关数据文件安装至`Application Support`文件夹。
 
 由于`EulerLauncher.app`对`EulerLauncherd`有依赖关系，请严格按照以下顺序构建`EulerLauncherd`及`EulerLauncher.app`:
 
 1. EulerLauncherd:
 
-    项目源码中已包含用于构建OmniVirtd的Spec脚本`OmniVirtd-Mac.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
+    项目源码中已包含用于构建EulerLauncherd的Spec脚本`EulerLauncherd-Mac.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
     ``` Shell
-    pyinstaller --clean --noconfirm OmniVirtd-Mac.spec
+    pyinstaller --clean --noconfirm EulerLauncherd-Mac.spec
     ```
 
 2. EulerLauncher.app:
 
-    项目源码中已包含用于构建OmniVirt的Spec脚本`OmniVirt-MacOS.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
+    项目源码中已包含用于构建EulerLauncher的Spec脚本`EulerLauncher-MacOS.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
     ``` Shell
-    pyinstaller --clean --noconfirm OmniVirt-MacOS.spec
+    pyinstaller --clean --noconfirm EulerLauncher-MacOS.spec
     ```
 
 构建`omnivirt` CLI 及 `install` 脚本, cli与install之间有依赖关系，请严格按照下面的顺序进行构建:
@@ -79,12 +79,12 @@ pyinstaller --clean --noconfirm install.spec
 首先，我们创建一个新目录并将文件移动到其中。
 ``` Shell
 mkdir -p dist/dmg
-cp -R dist/OmniVirt.app dist/dmg
+cp -R dist/EulerLauncher.app dist/dmg
 ```
 
 然后，我们可以使用下面的命令来制作磁盘镜像文件:
 ``` Shell
-create-dmg --volname "OmniVirt" --volicon "etc/images/favicon.png" --window-pos 200 120 --window-size 600 300 --icon-size 100 --icon "OmniVirt.app" 175 120 --hide-extension "OmniVirt.app" --app-drop-link 425 120 "dist/OmniVirt.dmg" "dist/dmg/"
+create-dmg --volname "EulerLauncher" --volicon "etc/images/favicon.png" --window-pos 200 120 --window-size 600 300 --icon-size 100 --icon "EulerLauncher.app" 175 120 --hide-extension "EulerLauncher.app" --app-drop-link 425 120 "dist/EulerLauncher.dmg" "dist/dmg/"
 ```
 
 `EulerLauncher.dmg`中将只包含`EulerLauncher.app`主程序，需要将`install`脚本及`EulerLauncher` CLI工具一并压缩后再进行分发。
