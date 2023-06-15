@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['eulerlauncher/install.py'],
+    ['../eulerlauncher/install.py'],
     pathex=[],
     binaries=[('../dist/eulerlauncher', './etc')],
     datas=[('../etc/eulerlauncher.conf', './etc'), ('../resources/qemu/edk2-aarch64-code.fd', './etc'), ('../resources/qemu/edk2-x86_64-code.fd', './etc')],

@@ -2,11 +2,13 @@
     "x86_64":
     {
         "22.03-LTS": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-22.03-LTS/virtual_machine_img/x86_64/openEuler-22.03-LTS-x86_64.qcow2.xz",
-            "21.09": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-21.09/virtual_machine_img/x86_64/openEuler-21.09-x86_64.qcow2.xz"
+        "22.09": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-22.09/virtual_machine_img/x86_64/openEuler-22.09-x86_64.qcow2.xz",
+        "23.03": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-23.03/virtual_machine_img/x86_64/openEuler-23.03-x86_64.qcow2.xz"
     },
     "aarch64":
     {
         "22.03-LTS": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-22.03-LTS/virtual_machine_img/aarch64/openEuler-22.03-LTS-aarch64.qcow2.xz",
-        "21.09": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-21.09/virtual_machine_img/aarch64/openEuler-21.09-aarch64.qcow2.xz"
+        "22.09": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-22.09/virtual_machine_img/aarch64/openEuler-22.09-aarch64.qcow2.xz",
+        "23.03": "https://mirrors.tuna.tsinghua.edu.cn/openeuler/openEuler-23.03/virtual_machine_img/aarch64/openEuler-23.03-aarch64.qcow2.xz"
     }
 }

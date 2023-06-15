@@ -46,7 +46,7 @@ brew install wget
 
 ## 安装EulerLauncher
 
-**EulerLauncher**当前支持MacOS Ventura, 支持Apple Silicon芯片版及x86芯片版，前往[EulerLauncher最新版下载][1]下载MacOS版软件包并解压到期望的位置。
+**EulerLauncher**当前支持MacOS Ventura, 支持Apple Silicon芯片版及x86芯片版，前往[EulerLauncher最新版下载][2]下载MacOS版软件包并解压到期望的位置。
 
 解压后的目录包含以下文件：
 
@@ -254,4 +254,4 @@ eulerlauncher delete-instance {instance_name}
 
 
 [1]: https://developer.apple.com/documentation/vmnet
-[2]: https://gitee.com/openeuler/omnivirt/releases
+[2]: https://gitee.com/openeuler/eulerlauncher/releases

@@ -47,6 +47,6 @@ exe = EXE(
 app = BUNDLE(
     exe,
     name='EulerLauncher.app',
-    icon='etc/images/favicon.ico',
+    icon='../etc/images/favicon.ico',
     bundle_identifier=None,
 )
