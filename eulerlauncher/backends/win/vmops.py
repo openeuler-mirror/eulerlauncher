@@ -64,7 +64,7 @@ class VMOps(object):
         for instance_name in instance_names:
             vm = objs.Instance(name=instance_name)
             meta = self.get_meta(instance_name)
-            if not meta or not meta['creator'] == 'omnivirt':
+            if not meta or not meta['creator'] == 'eulerlauncher':
                 continue
             else:
                 vm.metadata = meta
@@ -115,7 +115,7 @@ class VMOps(object):
         meta_data = {
             'uuid': uuid,
             'image': image_name,
-            'creator': 'omnivirt'
+            'creator': 'eulerlauncher'
         }
 
         # Create an instance
@@ -124,6 +124,8 @@ class VMOps(object):
         self._vmutils.create_scsi_controller(vm_name)
         # Attach the root disk to the driver
         self.attach_disk(vm_name, root_disk_path, constants.DISK)
+        # Set default flavor
+        self._vmutils.update_vm(vm_name, 4096, 0, '2', 0, False, 0)
         # Start the instance
         self.power_up(vm_name)
         nic_name = vm_name + '_eth0'
