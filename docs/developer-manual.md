@@ -10,7 +10,7 @@ EulerLauncher使用Python语言编写，源代码可以跨平台运行，但需�
 
 **安装Python:**
 
-参考[Python社区首页][1]完成Python安装，推荐安装Python 3.10及以上版本
+参考[Python社区首页][1]完成Python安装，推荐安装Python 3.9及以上版本
 
 **安装Homebrew**
 
@@ -57,21 +57,21 @@ EulerLauncher可执行文件包括以下几个部分：
 
     项目源码中已包含用于构建EulerLauncherd的Spec脚本`EulerLauncherd-Mac.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
     ``` Shell
-    pyinstaller --clean --noconfirm EulerLauncherd-Mac.spec
+    pyinstaller --clean --noconfirm specs/EulerLauncherd-Mac.spec
     ```
 
 2. EulerLauncher.app:
 
     项目源码中已包含用于构建EulerLauncher的Spec脚本`EulerLauncher-MacOS.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
     ``` Shell
-    pyinstaller --clean --noconfirm EulerLauncher-MacOS.spec
+    pyinstaller --clean --noconfirm specs/EulerLauncher-MacOS.spec
     ```
 
-构建`omnivirt` CLI 及 `install` 脚本, cli与install之间有依赖关系，请严格按照下面的顺序进行构建:
+构建`eulerlauncher` CLI 及 `install` 脚本, cli与install之间有依赖关系，请严格按照下面的顺序进行构建:
 
 ``` Shell
-pyinstaller --clean --noconfirm cli.spec
-pyinstaller --clean --noconfirm install.spec
+pyinstaller --clean --noconfirm specs/cli-mac.spec
+pyinstaller --clean --noconfirm specs/install.spec
 ```
 
 ### 制作`.dmg`：
@@ -88,6 +88,57 @@ create-dmg --volname "EulerLauncher" --volicon "etc/images/favicon.png" --window
 ```
 
 `EulerLauncher.dmg`中将只包含`EulerLauncher.app`主程序，需要将`install`脚本及`EulerLauncher` CLI工具一并压缩后再进行分发。
+
+
+## 在Windows上构建EulerLauncher
+
+**安装Python:**
+
+参考[Python社区首页][1]完成Python安装，推荐安装Python 3.9及以上版本
+
+EulerLauncher使用`Pyinstaller`将源码编译为Windows可执行文件(.exe)。
+
+使用下面命令安装`Pyinstaller`
+
+``` Shell
+pip3 install pyinstaller
+```
+
+进入项目目录并准备开始工作
+
+``` Shell
+cd \\path\\to\\EulerLauncher
+```
+
+安装项目依赖
+
+``` Shell
+pip3 install -r requirements-win.txt
+```
+
+### 构建
+
+EulerLauncher可执行文件包括以下几个部分：
+
+- eulerlauncherd.exe：EulerLauncher的主进程，是运行在后台的守护进程，负责与各类虚拟化后端交互，管理虚拟机、容器以及镜像的生命周期，eulerlauncherd.exe是运行在后台的守护进程。
+- eulerlauncher.exe：EulerLauncher的CLI客户端，用户通过该客户端与eulerlauncherd守护进程交互，对虚拟机、镜像等进行相关操作。
+- config-env.bat: 帮助用户快速配置环境变量
+
+1. 构建`eulerlauncherd.exe`:
+
+项目源码中已包含用于构建EulerLauncherd的Spec脚本`EulerLauncherd-win.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
+
+    ``` Shell
+    pyinstaller --clean --noconfirm specs\\EulerLauncherd-win.spec
+    ```
+
+2. 构建`eulerlauncher.exe`:
+
+``` Shell
+pyinstaller --clean --noconfirm specs\\cli-mac.spec
+```
+
+3. 将`etc\bin`目录下的`config-env.bat`及`qemu-img`文件夹拷贝到制品目录，并进行压缩。
 
 [1]: https://www.python.org/
 [2]: https://brew.sh/

@@ -5,7 +5,6 @@ dnspython
 grpcio
 grpcio-tools
 pkg-config
-libvirt-python
 lxml
 os-win
 oslo.concurrency

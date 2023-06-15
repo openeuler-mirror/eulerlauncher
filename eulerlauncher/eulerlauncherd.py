@@ -23,7 +23,9 @@ from eulerlauncher.utils import utils
 IMG_URL = 'https://gitee.com/openeuler/eulerlauncher/raw/master/etc/supported_images.json'
 
 # Avoid create zombie children in MacOS and Linux
-signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+host_os_raw = platform.uname().system
+if host_os_raw != 'Windows':
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('conf_file', help='Configuration file for the application', type=str)
@@ -106,14 +108,17 @@ def serve(arch, host_os, CONF, LOG, base_dir):
     server.start()
     LOG.debug('EulerLauncherd Service Started ...')
 
-    def term_handler(signum, frame):
-        pid = os.getpid()
-        os.killpg(os.getpgid(pid), signal.SIGKILL)
+    if host_os == 'Win':
+        return server
+    else:
+        def term_handler(signum, frame):
+            pid = os.getpid()
+            os.killpg(os.getpgid(pid), signal.SIGKILL)
 
-    # Avoid create orphan children in MacOS and Linux
-    signal.signal(signal.SIGTERM, term_handler)
+        # Avoid create orphan children in MacOS and Linux
+        signal.signal(signal.SIGTERM, term_handler)
     
-    while True:
+        while True:
             time.sleep(1)
 
 def init_launcherd(conf, base_dir):
@@ -134,15 +139,43 @@ def init_launcherd(conf, base_dir):
         LOG.debug('Error: ' + str(e))
         return str(e)
     else:
-        serve(host_arch, host_os, CONF, LOG, base_dir)
+        return serve(host_arch, host_os, CONF, LOG, base_dir)
 
 
 if __name__ == '__main__':
-    args = parser.parse_args()
-    conf_file = args.conf_file
+    host_os_raw = platform.uname().system
+    if host_os_raw != 'Windows':
+        args = parser.parse_args()
+        conf_file = args.conf_file
+        base_dir = args.base_dir
+    else:
+        conf_file = os.path.join(os.getcwd(), 'etc', 'eulerlauncher.conf')
+        base_dir = None
     try:
         pass
     except Exception as e:
         print('Error: ' + str(e))
     else:
-        init_launcherd(conf_file, args.base_dir)
+        if host_os_raw != 'Windows':
+            init_launcherd(conf_file, base_dir)
+        else:
+            try:
+                logo = PIL.Image.open(os.path.join(os.getcwd(), 'etc', 'favicon.png'))
+
+                def on_clicked(icon, item):
+                    icon.stop()
+        
+                icon = pystray.Icon('EulerLauncher', logo, menu=pystray.Menu(
+                    pystray.MenuItem('Exit EulerLauncher', on_clicked)
+                ))
+
+            except Exception as e:
+                print('Error: ' + str(e))
+                sys.exit(0)
+            
+            server = init_launcherd(conf_file, base_dir)
+
+            icon.run()
+            server.stop(None)
+            sys.exit(0)
+            

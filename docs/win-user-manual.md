@@ -8,7 +8,7 @@
 
 - eulerlauncherd.exe：EulerLauncher的主进程，是运行在后台的守护进程，负责与各类虚拟化后端交互，管理虚拟机、容器以及镜像的生命周期，eulerlauncherd.exe是运行在后台的守护进程。
 - eulerlauncher.exe：EulerLauncher的CLI客户端，用户通过该客户端与eulerlauncherd守护进程交互，对虚拟机、镜像等进行相关操作。
-- eulerlauncher-win.conf：OmniVirt配置文件，需与eulerlauncherd.exe放置于同一目录下，参考下面配置进行相应配置：
+- eulerlauncher.conf：EulerLauncher配置文件，需与eulerlauncherd.exe放置于同一目录下，参考下面配置进行相应配置：
 
 ```Conf
 [default]
@@ -16,11 +16,11 @@
 log_dir = D:\eulerlauncher-workdir\logs
 # 配置日志等级是否开启Debug
 debug = True
-# 配置OmniVirt的工作目录
+# 配置EulerLauncher的工作目录
 work_dir = D:\eulerlauncher-workdir
-# 配置OmniVirt的镜像目录，镜像目录为对工作目录的相对目录
+# 配置EulerLauncher的镜像目录，镜像目录为对工作目录的相对目录
 image_dir = images
-# 配置OmniVirt的虚拟机文件目录，虚拟机文件目录为对工作目录的相对目录
+# 配置EulerLauncher的虚拟机文件目录，虚拟机文件目录为对工作目录的相对目录
 instance_dir = instances
 ```
 
@@ -39,7 +39,7 @@ instance_dir = instances
 
 1. 获取可用镜像列表：
 ```PowerShell
-eulerlauncher.exe images
+eulerlauncher images
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -55,7 +55,7 @@ eulerlauncher.exe images
 2. 下载远端镜像
 
 ```PowerShell
-eulerlauncher.exe download-image 22.03-LTS
+eulerlauncher download-image 22.03-LTS
 
 Downloading: 22.03-LTS, this might take a while, please check image status with "images" command.
 ```
@@ -63,7 +63,7 @@ Downloading: 22.03-LTS, this might take a while, please check image status with 
 镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态：
 
 ```PowerShell
-eulerlauncher.exe images
+eulerlauncher images
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -78,7 +78,7 @@ eulerlauncher.exe images
 当镜像状态转变为 `Ready` 时，表示镜像下载完成，处于 `Ready` 状态的镜像可被用来创建虚拟机：
 
 ```PowerShell
-eulerlauncher.exe images
+eulerlauncher images
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -94,7 +94,7 @@ eulerlauncher.exe images
 用户也可以加载自定义镜像或预先下载到本地的镜像到EulerLauncher中用于创建自定义虚拟机：
 
 ```PowerShell
-eulerlauncher.exe load-image --path {image_file_path} IMAGE_NAME
+eulerlauncher load-image --path {image_file_path} IMAGE_NAME
 ```
 
 当前支持加载的镜像格式有 `xxx.qcow2.xz`，`xxx.qcow2`
@@ -102,7 +102,7 @@ eulerlauncher.exe load-image --path {image_file_path} IMAGE_NAME
 例如：
 
 ```PowerShell
-eulerlauncher.exe load-image --path D:\openEuler-22.03-LTS-x86_64.qcow2.xz 2203-load
+eulerlauncher load-image --path D:\openEuler-22.03-LTS-x86_64.qcow2.xz 2203-load
 
 Loading: 2203-load, this might take a while, please check image status with "images" command.
 ```
@@ -110,7 +110,7 @@ Loading: 2203-load, this might take a while, please check image status with "ima
 将位于 `D:\` 目录下的 `openEuler-22.03-LTS-x86_64.qcow2.xz` 加载到OmniVirt系统中，并命名为 `2203-load`，与下载命令一样，加载命令也是一个异步命令，用户需要用镜像列表命令查询镜像状态直到显示为 `Ready`, 但相对于直接下载镜像，加载镜像的速度会快很多：
 
 ```PowerShell
-eulerlauncher.exe images
+eulerlauncher images
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -136,7 +136,7 @@ eulerlauncher images
 通过下面的命令将镜像从EulerLauncher系统中删除：
 
 ```PowerShell
-eulerlauncher.exe delete-image 2203-load
+eulerlauncher delete-image 2203-load
 
 Image: 2203-load has been successfully deleted.
 ```
@@ -146,7 +146,7 @@ Image: 2203-load has been successfully deleted.
 1. 获取虚拟机列表：
 
 ```Powershell
-eulerlauncher.exe list
+eulerlauncher list
 
 +----------+-----------+---------+---------------+
 |   Name   |   Image   |  State  |       IP      |
@@ -171,14 +171,14 @@ ssh root@{instance_ip}
 3. 创建虚拟机
 
 ```PowerShell
-eulerlauncher.exe launch --image {image_name} {instance_name}
+eulerlauncher launch --image {image_name} {instance_name}
 ```
 
-通过 `--image` 指定镜像，同时指定虚拟机名称。
+通过 `--image` 指定镜像，同时指定虚拟机名称，EulerLauncher会根据所指定的镜像默认创建一个规格为`2U4G`的openEuler虚拟机。
 
 4. 删除虚拟机
 ```PowerShell
-eulerlauncher.exe delete-instance {instance_name}
+eulerlauncher delete-instance {instance_name}
 ```
 根据虚拟机名称删除指定的虚拟机。
 

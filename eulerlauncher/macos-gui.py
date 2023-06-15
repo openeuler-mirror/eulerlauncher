@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
         icon.run()
         
-        # Shutdown omnivirtd, we created it with sudo, so kill it with sudo
+        # Shutdown eulerlauncherd, we created it with sudo, so kill it with sudo
         subprocess.check_call(['sudo', 'kill', str(launcherd.pid)])
         os.waitpid(launcherd.pid, 0)
         sys.exit(0)
