@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['eulerlauncher/cli.py'],
+    ['../eulerlauncher/cli.py'],
     pathex=[],
     binaries=[],
     datas=[],
