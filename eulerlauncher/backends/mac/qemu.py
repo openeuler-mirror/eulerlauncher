@@ -11,7 +11,7 @@ class QemuDriver(object):
         host_arch_raw = platform.uname().machine
         host_arch = constants.ARCH_MAP[host_arch_raw]
         self.qemu_bin = conf.conf.get('default', 'qemu_dir')
-        self.uefi_file = os.path.join('/Library/Application\ Support/org.openeuler.omnivirt/','edk2-' + host_arch + '-code.fd')
+        self.uefi_file = os.path.join('/Library/Application\ Support/org.openeuler.eulerlauncher/','edk2-' + host_arch + '-code.fd')
         self.uefi_params = ',if=pflash,format=raw,readonly=on'
         self.vm_cpu = conf.conf.get('vm', 'cpu_num')
         self.vm_ram = conf.conf.get('vm', 'memory')
