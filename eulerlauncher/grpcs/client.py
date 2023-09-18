@@ -50,7 +50,7 @@ class Client(object):
             return err_msg
         
         supported = False
-        for tp in constants.IMAGE_LOAD_SUPPORTED_TYPES:
+        for tp in constants.IMAGE_LOAD_SUPPORTED_TYPES + constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED:
             if path.endswith(tp):
                 supported = True
                 break

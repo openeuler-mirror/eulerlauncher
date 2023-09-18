@@ -67,11 +67,11 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
         LOG.debug(f"Get request to load image: {request.name} from path: {request.path} ...")
 
         supported, fmt = omni_utils.check_file_tail(
-            request.path, omni_constants.IMAGE_LOAD_SUPPORTED_TYPES)
+            request.path, omni_constants.IMAGE_LOAD_SUPPORTED_TYPES + omni_constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED)
         
         if not supported:
-            supported_fmt = ', '.join(omni_constants.IMAGE_LOAD_SUPPORTED_TYPES)
-            msg = f'Unsupported image format, the current supported format are: {supported_fmt}.'
+            supported_fmt = ', '.join(omni_constants.IMAGE_LOAD_SUPPORTED_TYPES + omni_constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED)
+            msg = f'Unsupported image format, the current supported formats are: {supported_fmt}.'
 
             return images_pb2.GeneralImageResponse(ret=1, msg=msg)
 
