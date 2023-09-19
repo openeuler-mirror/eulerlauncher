@@ -1,6 +1,7 @@
 argparse
 click
 configparser
+chardet
 dnspython
 grpcio
 grpcio-tools

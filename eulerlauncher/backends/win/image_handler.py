@@ -28,6 +28,15 @@ class WinImageHandler(object):
         # Download the image
         img_name = wget.filename_from_url(images['remote'][img_to_download]['path'])
         img_dict = copy.deepcopy(images['remote'][img_to_download])
+        downloaded_bytes = 0
+
+        def progress_bar(current, total, width):
+            nonlocal downloaded_bytes
+            if current == 0 or current - downloaded_bytes > 1024*1024 or current == total:
+                progress_percent = int((current / total) * 100)
+                downloaded_bytes = current
+                with open(os.path.join(self.image_dir, 'download_progress_bar_' + img_to_download), 'w') as progress_file:
+                    progress_file.write(f"{current/1024/1024: .2f}/{total/1024/1024: .2f}MB ({progress_percent}%)")
 
         if not os.path.exists(os.path.join(self.image_dir, img_name)):
             self.LOG.debug(f'Downloading image: {img_to_download} from remote repo ...')
@@ -35,7 +44,7 @@ class WinImageHandler(object):
             img_dict['status'] = constants.IMAGE_STATUS_DOWNLOADING
             images['local'][img_to_download] = img_dict
             omni_utils.save_json_data(self.image_record_file, images)
-            wget.download(url=images['remote'][img_to_download]['path'], out=os.path.join(self.image_dir, img_name), bar=None)
+            wget.download(url=images['remote'][img_to_download]['path'], out=os.path.join(self.image_dir, img_name), bar=progress_bar)
             self.LOG.debug(f'Image: {img_to_download} succesfully downloaded from remote repo ...')
     
         # Decompress the image
@@ -55,6 +64,8 @@ class WinImageHandler(object):
 
         self.LOG.debug(f'Cleanup temp files ...')
         os.remove(os.path.join(self.image_dir, qcow2_name))
+        if os.path.exists(os.path.join(self.image_dir, "download_progress_bar_" + img_to_download)):
+            os.remove(os.path.join(self.image_dir, "download_progress_bar_" + img_to_download))
 
         # Record local image
         img_dict['status'] = constants.IMAGE_STATUS_READY
@@ -62,6 +73,17 @@ class WinImageHandler(object):
         images['local'][img_to_download] = img_dict
         omni_utils.save_json_data(self.image_record_file, images)
         self.LOG.debug(f'Image: {img_to_download} is ready ...')
+
+    def download_progress_bar(self, img_name):
+        progress_bar = ""
+        progress_bar_path = os.path.join(self.image_dir, 'download_progress_bar_' + img_name)
+        if os.path.exists(progress_bar_path):
+            with open(progress_bar_path, "r") as progress_bar_file:
+                progress_bar = progress_bar_file.read()
+        if progress_bar != "":
+            return constants.IMAGE_STATUS_DOWNLOADING + ": " + progress_bar
+        else:
+            return constants.IMAGE_STATUS_DOWNLOADING
 
     def delete_image(self, images, img_to_delete):
         if img_to_delete not in images['local'].keys():
@@ -111,11 +133,13 @@ class WinImageHandler(object):
         vhdx_name = img_to_load + '.vhdx'
         if fmt != "vhdx":
             self.LOG.debug(f'Converting image file: {img_name} to {vhdx_name} ...')
+            load_progress_bar_path = os.path.join(self.image_dir, "load_progress_bar_" + img_to_load)
             with powershell.PowerShell('GBK') as ps:
-                cmd = 'qemu-img convert -O vhdx {0} {1}'
-                outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, img_name), os.path.join(self.image_dir, vhdx_name)))
+                cmd = 'qemu-img convert -p -O vhdx {0} {1} | Out-File -FilePath {2}'
+                outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, img_name), os.path.join(self.image_dir, vhdx_name), load_progress_bar_path))
             self.LOG.debug(f'Cleanup temp files ...')
             os.remove(os.path.join(self.image_dir, img_name))
+            os.remove(load_progress_bar_path)
 
         # Record local image
         image.path = os.path.join(self.image_dir, vhdx_name)
@@ -123,3 +147,14 @@ class WinImageHandler(object):
         images['local'][image.name] = image.to_dict()
         omni_utils.save_json_data(self.image_record_file, images)
         self.LOG.debug(f'Image: {vhdx_name} is ready ...')
+
+    def load_progress_bar(self, img_name):
+        progress_bar_lines = []
+        progress_bar_path = os.path.join(self.image_dir, "load_progress_bar_" + img_name)
+        if os.path.exists(progress_bar_path):
+            with open(progress_bar_path, 'r', encoding=omni_utils.detect_encoding(progress_bar_path), errors='ignore') as progress_bar_file:
+                progress_bar_lines = progress_bar_file.readlines()
+        if len(progress_bar_lines) > 1 and progress_bar_lines[-2].strip() != "":
+            return constants.IMAGE_STATUS_LOADING + ": " + progress_bar_lines[-2].strip()
+        else:
+            return constants.IMAGE_STATUS_LOADING

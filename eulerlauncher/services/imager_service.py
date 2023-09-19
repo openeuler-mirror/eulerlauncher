@@ -41,6 +41,10 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
                 image.name = img['name']
                 image.location = img['location']
                 image.status = img['status']
+                if image.status == omni_constants.IMAGE_STATUS_DOWNLOADING:
+                    image.status = self.backend.download_progress_bar(image.name)
+                elif image.status == omni_constants.IMAGE_STATUS_LOADING:
+                    image.status = self.backend.load_progress_bar(image.name)
                 ret.append(image)
         LOG.debug(f"Responded: {ret}")
         return images_pb2.ListImageResponse(images=ret)
@@ -51,7 +55,7 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
         
         if request.name not in all_images['remote'].keys():
             LOG.debug(f'Image: {request.name} not valid for download')
-            msg = f'Error: Image {request.name} is valid for download, please check image name from REMOTE IMAGE LIST using "images" command ...'
+            msg = f'Error: Image {request.name} is not valid for download, please check image name from REMOTE IMAGE LIST using "images" command ...'
             return images_pb2.GeneralImageResponse(ret=1, msg=msg)
         
         @omni_utils.asyncwrapper
