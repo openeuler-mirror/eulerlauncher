@@ -1,0 +1,27 @@
+CHANGES
+=======
+
+* !9 Rename to EulerLauncher
+* rename to eulerlauncher
+* !7 修改Developer-Manual中的OmniVirt为EulerLauncher
+* 修改Developer-Manual中的OmniVirt为EulerLauncher
+* !6 修改OmniVirt为EulerLauncher
+* 修改omnivirt为EulerLauncher
+* !5 Move codes from github to gitee Merge pull request !5 from ZhengZhenyu/master
+* add LICENSE
+* Move codes from github to gitee
+* Change name to EulerLauncher
+* Add manual for macos
+* !4 Add Information about env Merge pull request !4 from ZhengZhenyu/dev
+* Add information about env
+* !3 Add info about how to quit with tray icon Merge pull request !3 from ZhengZhenyu/dev
+* Add information about quit omnivirtd with tray
+* !2 Fix typos Merge pull request !2 from ZhengZhenyu/dev
+* Fix typos in logo and readme
+* !1 刷新OmniVirt用户指导文档
+* Initialize project readme
+
+v0.1
+----
+
+* Initial commit
