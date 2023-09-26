@@ -1,0 +1,66 @@
+// vm_operations.proto
+
+syntax = "proto3";
+
+package vmoperations;
+
+service VmOperationsService {
+    rpc CreateVm(CreateVmRequest) returns (VmResponse);
+    rpc StartVm(StartVmRequest) returns (VmResponse);
+    rpc StopVm(StopVmRequest) returns (VmResponse);
+    rpc AttachDisk(AttachDiskRequest) returns (VmResponse);
+    rpc DetachDisk(DetachDiskRequest) returns (VmResponse);
+    rpc CreateFlavor(CreateFlavorRequest) returns (VmResponse);
+    rpc DeleteFlavor(DeleteFlavorRequest) returns (VmResponse);
+}
+
+message CreateVmRequest {
+    string vm_name = 1;
+    bool vnuma_enabled = 2;
+    string vm_gen = 3;
+    string instance_path = 4;
+    string root_disk_path = 5;
+    Flavor flavor = 6;
+}
+
+message StartVmRequest {
+    string vm_name = 1;
+}
+
+message StopVmRequest {
+    string vm_name = 1;
+}
+
+message AttachDiskRequest {
+    string vm_name = 1;
+    string disk_path = 2;
+    string drive_type = 3;
+}
+
+message DetachDiskRequest {
+    string vm_name = 1;
+    string disk_path = 2;
+}
+
+message CreateFlavorRequest {
+    string flavor_name = 1;
+    string cpucores_num = 2;
+    string ram_capacity = 3;
+    string disk_capacity = 4;
+}
+
+message DeleteFlavorRequest {
+    string flavor_id = 1;
+}
+
+message VmResponse {
+    string message = 1;
+}
+
+message Flavor {
+    string flavor_id = 1;
+    string flavor_name = 2;
+    string cpucores_num = 3;
+    string ram_capacity = 4;
+    string disk_capacity = 5;
+}
