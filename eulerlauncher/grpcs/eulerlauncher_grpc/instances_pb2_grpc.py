@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2 as instances__pb2
+from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2 as eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2
 
 
 class InstanceGrpcServiceStub(object):
@@ -16,18 +16,18 @@ class InstanceGrpcServiceStub(object):
         """
         self.list_instances = channel.unary_unary(
                 '/omnivirt.InstanceGrpcService/list_instances',
-                request_serializer=instances__pb2.ListInstancesRequest.SerializeToString,
-                response_deserializer=instances__pb2.ListInstancesResponse.FromString,
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ListInstancesRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ListInstancesResponse.FromString,
                 )
         self.create_instance = channel.unary_unary(
                 '/omnivirt.InstanceGrpcService/create_instance',
-                request_serializer=instances__pb2.CreateInstanceRequest.SerializeToString,
-                response_deserializer=instances__pb2.CreateInstanceResponse.FromString,
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.CreateInstanceRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.CreateInstanceResponse.FromString,
                 )
         self.delete_instance = channel.unary_unary(
                 '/omnivirt.InstanceGrpcService/delete_instance',
-                request_serializer=instances__pb2.DeleteInstanceRequest.SerializeToString,
-                response_deserializer=instances__pb2.DeleteInstanceResponse.FromString,
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceResponse.FromString,
                 )
 
 
@@ -57,18 +57,18 @@ def add_InstanceGrpcServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'list_instances': grpc.unary_unary_rpc_method_handler(
                     servicer.list_instances,
-                    request_deserializer=instances__pb2.ListInstancesRequest.FromString,
-                    response_serializer=instances__pb2.ListInstancesResponse.SerializeToString,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ListInstancesRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ListInstancesResponse.SerializeToString,
             ),
             'create_instance': grpc.unary_unary_rpc_method_handler(
                     servicer.create_instance,
-                    request_deserializer=instances__pb2.CreateInstanceRequest.FromString,
-                    response_serializer=instances__pb2.CreateInstanceResponse.SerializeToString,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.CreateInstanceRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.CreateInstanceResponse.SerializeToString,
             ),
             'delete_instance': grpc.unary_unary_rpc_method_handler(
                     servicer.delete_instance,
-                    request_deserializer=instances__pb2.DeleteInstanceRequest.FromString,
-                    response_serializer=instances__pb2.DeleteInstanceResponse.SerializeToString,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -92,8 +92,8 @@ class InstanceGrpcService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.InstanceGrpcService/list_instances',
-            instances__pb2.ListInstancesRequest.SerializeToString,
-            instances__pb2.ListInstancesResponse.FromString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ListInstancesRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ListInstancesResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -109,8 +109,8 @@ class InstanceGrpcService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.InstanceGrpcService/create_instance',
-            instances__pb2.CreateInstanceRequest.SerializeToString,
-            instances__pb2.CreateInstanceResponse.FromString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.CreateInstanceRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.CreateInstanceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -126,7 +126,7 @@ class InstanceGrpcService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.InstanceGrpcService/delete_instance',
-            instances__pb2.DeleteInstanceRequest.SerializeToString,
-            instances__pb2.DeleteInstanceResponse.FromString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

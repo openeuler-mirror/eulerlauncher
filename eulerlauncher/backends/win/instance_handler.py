@@ -1,6 +1,7 @@
 import os
 import shutil
 import time
+import psutil
 
 from oslo_utils import uuidutils
 from os_win import constants as os_win_const
@@ -11,13 +12,15 @@ from eulerlauncher.backends.win import vmops
 from eulerlauncher.utils import constants
 from eulerlauncher.utils import utils as omni_utils
 from eulerlauncher.utils import objs
+from eulerlauncher.backends.win import qemu
+
 
 
 _vmops = vmops.VMOps()
 
 class WinInstanceHandler(object):
     
-    def __init__(self, conf, work_dir, instance_dir, image_dir, image_record_file, logger) -> None:
+    def __init__(self, conf, work_dir, instance_dir, image_dir, image_record_file, logger, base_dir) -> None:
         self.conf = conf
         self.work_dir = work_dir
         self.instance_dir = instance_dir
@@ -25,43 +28,78 @@ class WinInstanceHandler(object):
         self.image_dir = image_dir
         self.image_record_file = image_record_file
         self.LOG = logger
+        self.driver = qemu.QemuDriver(self.conf, logger)
+        self.running_instances = {}
+        self.instance_pids = []
+        self.base_dir = base_dir
+        self.pattern = conf.conf.get('default', 'pattern')
 
-    def list_instances(self):
-        vms = _vmops.list_instances()
-        return vms
+    # def list_instances(self):
+    #     vms = _vmops.list_instances()
+    #     return vms
     
     def check_names(self, name, all_instances):
         ret = _vmops.check_all_instance_names(name)
         return ret
-    
-    def create_instance(self, name, image_id, instance_record, all_instances, all_images):
+
+
+    def list_instances(self):
+
+        instances = omni_utils.load_json_data(self.instance_record_file)['instances']
+        vm_list = []
+
+        if self.pattern == 'qemu':
+            for instance in instances.values():
+                vm = objs.Instance(name=instance['name'])
+                vm.uuid = instance['uuid']
+                vm.mac = instance['mac_address']
+                vm.info = None
+                vm.vm_state = _vmops.check_vm_state(instance)
+                if vm.vm_state == constants.VM_STATE_MAP[2] and (not instance['ip_address'] or instance['ip_address'] == 'N/A'):
+                    ip_address = _vmops.parse_ip_addr(vm.mac)
+                    vm.ip = ip_address
+                else:
+                    vm.ip = instance['ip_address']
+                vm.image = instance['image']
+                vm_list.append(vm)
+        elif self.pattern == 'hyper-v':
+            vm_list = _vmops.list_instances()
+        return vm_list
+
+    def create_instance(self, name, image_id, instance_record, all_instances, all_images, arch='x86'):
         # Create dir for the instance
+        instance_path = os.path.join(self.instance_dir, name)
+        os.makedirs(instance_path)
+        img_path = all_images['local'][image_id]['path']
+
+        root_disk_path = shutil.copyfile(img_path, os.path.join(instance_path, image_id + '.qcow2')) if self.pattern == 'qemu' \
+            else shutil.copyfile(img_path, os.path.join(instance_path, image_id + '.vhdx'))
+        vm_ip = ''
         vm_dict = {
             'name': name,
             'uuid': uuidutils.generate_uuid(),
             'image': image_id,
             'vm_state': constants.VM_STATE_MAP[99],
             'ip_address': 'N/A',
-            'mac_address': 'N/A',
-            'identification': {
-                'type': 'name',
-                'id': name
-            }
+            'mac_address': omni_utils.generate_mac() if self.pattern == 'qemu' else 'N/A',
+            'identification': {'type': 'pid','id': None} if self.pattern == 'qemu' else {'type': 'name','id': name}
         }
-
-        instance_path = os.path.join(self.instance_dir, name)
-        os.makedirs(instance_path)
-        img_path = all_images['local'][image_id]['path']
-    
-        root_disk_path = shutil.copyfile(img_path, os.path.join(instance_path, image_id + '.vhdx'))
-        _vmops.build_and_run_vm(name, vm_dict['uuid'], image_id, False, 2, instance_path, root_disk_path)
-
-        info = _vmops.get_info(name)
-        vm_dict['vm_state'] = constants.VM_STATE_MAP[info['EnabledState']]
-        ip = _vmops.get_instance_ip_addr(name)
-        if ip: 
-            vm_dict['ip_address'] = ip
-        
+        if self.pattern == 'qemu':
+            vm_uuid = uuidutils.generate_uuid()
+            vm_process = self.driver.create_vm(name, vm_uuid, vm_dict['mac_address'], root_disk_path, arch)
+            self.running_instances[vm_process.pid] = vm_process
+            #self.LOG.debug(vm_process.returncode)
+            #self.LOG.debug(vm_process.pid)
+            self.instance_pids.append(vm_process.pid)
+            vm_dict['identification']['id'] = vm_process.pid
+            vm_ip = _vmops.parse_ip_addr(vm_dict['mac_address'])
+        elif self.pattern == 'hyper-v':
+            _vmops.build_and_run_vm(name, vm_dict['uuid'], image_id, False, 2, instance_path, root_disk_path)
+            info = _vmops.get_info(name)
+            vm_dict['vm_state'] = constants.VM_STATE_MAP[info['EnabledState']]
+            vm_ip = _vmops.get_instance_ip_addr(name)
+        if vm_ip:
+            vm_dict['ip_address'] = vm_ip
         instance_record_dict = {
             'name': name,
             'uuid': vm_dict['uuid'],
@@ -77,18 +115,38 @@ class WinInstanceHandler(object):
 
         return {
             'name': name,
-            'vm_state': vm_dict['vm_state'],
+            'vm_state': _vmops.check_vm_state(vm_dict) if self.pattern == 'qemu' else vm_dict['vm_state'],
             'image': image_id,
             'ip_address': vm_dict['ip_address']
         }
-    
-    def delete_instance(self, name, instance_record, all_instances):
-        # Delete instance
-        _vmops.delete_instance(name)
 
+
+    def delete_instance(self, name, instance_record, all_instances):
+        # Delete instance process
+        instance = all_instances['instances'][name]
+        if self.pattern == 'qemu':
+            processes = []
+            if instance['identification']['type'] == 'pid':
+                instance_pid = instance['identification']['id']
+                if instance_pid in psutil.pids():
+                    processes = psutil.Process(instance_pid).children(recursive=True)
+                    processes.append(psutil.Process(instance_pid))
+                for child in processes:
+                    if child.pid in psutil.pids() and \
+                        child.is_running():
+                        child.kill()
+                        self.LOG.debug(f'Instance: {child.name()} with PID {child.pid} succesfully killed ...')
+                    else:
+                        self.LOG.debug(f'Instance: {child.name()} with PID {child.pid} already stopped, skip ...')
+
+            else:
+                self.LOG.debug(f'Instance: {name} unable to handled, skip ...')
+        elif self.pattern == 'hyper-v':
+            _vmops.delete_instance(name)
         # Cleanup files and records
-        instance_dir = all_instances['instances'][name]['path']
-        shutil.rmtree(instance_dir)
+        instance_dir = instance['path']
+        if os.path.exists(instance_dir):
+            shutil.rmtree(instance_dir)
         del all_instances['instances'][name]
 
         omni_utils.save_json_data(instance_record, all_instances)
@@ -198,3 +256,4 @@ class WinInstanceHandler(object):
         """Power on the specified instance."""
         self.LOG.debug("Power on instance", instance=instance)
         self._set_vm_state(instance, os_win_const.HYPERV_VM_STATE_ENABLED)
+

@@ -2,7 +2,11 @@
 **EulerLauncher**当前支持Windows11/10，前往[EulerLauncher最新版下载][1]下载Windows版软件包并解压到期望的位置。
 右键点击 `config-env.bat` 并选择**以管理员身份运行**，该脚本将进行环境变量相关的配置，将当前目录添加到系统环境变量 `path`中，如果使用者掌握如何配置环境变量，或配置脚本出现问题，也可以进行手动配置，将当前脚本所在目录及 `qemu-img` 子目录添加至系统环境变量 `path` 中。
 
-**EulerLauncher**在Windows上运行需要对接 `Hyper-V` 虚拟化后端，`Hyper-V` 是 Microsoft 的硬件虚拟化产品，可以为Windows上的虚拟机提供更为出色的性能。在运行**EulerLauncher**前，请先检查你的系统是否开启了 `Hyper-V`，具体检查及开启方法请参考[Hyper-V开启指导][2]或其他网络资源。
+**EulerLauncher**在Windows上运行需要对接 `Hyper-V` 或者`qemu`虚拟化后端，`Hyper-V` 是 Microsoft 的硬件虚拟化产品，可以为Windows上的虚拟机提供更为出色的性能。在运行**EulerLauncher**前，请先检查你的系统是否开启了 `Hyper-V`，具体检查及开启方法请参考[Hyper-V开启指导][2]或其他网络资源; `qmue`需要在[[qemu官网](https://qemu.weilnetz.de/w64/)]下载安装，然后在[[openvpn官网](https://build.openvpn.net/downloads/releases/)] 下载tap-windows网络适配器，修改名称为tap0并设置tap0的ipv4网络信息，然后将tap0设置为主机网络的共享网络，当tap0的ipv4连接显示Internet则说明配置成功，否则配置失败虚拟机无法分配ip地址。
+
+
+
+
 
 **EulerLauncher**解压后包含以下几个部分：
 
@@ -12,16 +16,17 @@
 
 ```Conf
 [default]
-# 配置日志文件的存储目录
-log_dir = D:\eulerlauncher-workdir\logs
-# 配置日志等级是否开启Debug
+log_dir = D:\workdir-test\logs
 debug = True
-# 配置EulerLauncher的工作目录
-work_dir = D:\eulerlauncher-workdir
-# 配置EulerLauncher的镜像目录，镜像目录为对工作目录的相对目录
+work_dir = D:\workdir-test
 image_dir = images
-# 配置EulerLauncher的虚拟机文件目录，虚拟机文件目录为对工作目录的相对目录
 instance_dir = instances
+qemu_dir = C:\Progra~1\qemu
+pattern = qemu
+
+[vm]
+cpu_num = 2
+memory = 8G
 ```
 
 配置完成后请右键点击eulerlauncherd.exe，选择以管理员身份运行，点击后eulerlauncherd.exe将以守护进程的形式在后台运行。
