@@ -1,5 +1,6 @@
 import click
 import prettytable as pt
+import getpass
 
 from eulerlauncher.grpcs import client
 
@@ -125,6 +126,32 @@ def launch(vm_name, image):
         else:
             print(ret['msg'])
 
+@click.command()
+@click.argument('vm_name')
+@click.option('--snapshot_name', help='name for the snapshot image')
+@click.option('--export_path', help='path for the exported snapshot image')
+def take_snapshot(vm_name, snapshot_name, export_path):
+
+    try:
+        ret = launcher_client.take_snapshot(vm_name, snapshot_name, export_path)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+@click.command()
+@click.argument('vm_name')
+@click.option('--image_name', help='name for the Python/Go/Java development image')
+@click.option('--export_path', help='path for the exported Python/Go/Java development image')
+def export_development_image(vm_name, image_name, export_path):
+
+    try:
+        pwd = getpass.getpass(f"Password for vm[{vm_name}] as root: ")
+        ret = launcher_client.export_development_image(vm_name, image_name, export_path, pwd)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
 
 @click.group()
 def cli():
@@ -139,4 +166,6 @@ if __name__ == '__main__':
     cli.add_command(launch)
     cli.add_command(delete_image)
     cli.add_command(delete_instance)
+    cli.add_command(take_snapshot)
+    cli.add_command(export_development_image)
     cli()

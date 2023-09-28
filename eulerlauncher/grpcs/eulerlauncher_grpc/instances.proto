@@ -8,6 +8,8 @@ service InstanceGrpcService {
     rpc list_instances (ListInstancesRequest) returns (ListInstancesResponse) {}
     rpc create_instance (CreateInstanceRequest) returns (CreateInstanceResponse) {}
     rpc delete_instance (DeleteInstanceRequest) returns (DeleteInstanceResponse) {}
+    rpc take_snapshot (TakeSnapshotRequest) returns (TakeSnapshotResponse) {}
+    rpc export_development_image (ExportDevelopmentImageRequest) returns (ExportDevelopmentImageResponse) {}
 }
 
 
@@ -45,4 +47,25 @@ message DeleteInstanceRequest {
 message DeleteInstanceResponse {
     uint32 ret = 1;
     string msg = 2;
+}
+
+message TakeSnapshotRequest {
+    string name = 1;
+    string snapshot = 2;
+    string dest_path = 3;
+}
+
+message TakeSnapshotResponse {
+    string msg = 1;
+}
+
+message ExportDevelopmentImageRequest {
+    string name = 1;
+    string image = 2;
+    string dest_path = 3;
+    string pwd = 4;
+}
+
+message ExportDevelopmentImageResponse {
+    string msg = 1;
 }

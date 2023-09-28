@@ -33,6 +33,7 @@ class VMOps(object):
     def __init__(self, virtapi=None):
         self._virtapi = virtapi
         self._vmutils = VMUtils_omni()
+        self._migrationutils = utilsfactory.get_migrationutils()
         self._netutils = utilsfactory.get_networkutils()
         self._hostutils = utilsfactory.get_hostutils()
 
@@ -181,3 +182,9 @@ class VMOps(object):
     
     def get_host_ips(self):
         return self._hostutils.get_local_ips()
+
+    def take_snapshot(self, vm_name, snapshot_name):
+        self._vmutils.take_vm_snapshot(vm_name, snapshot_name)
+
+    def export_vm(self, vm_name, dest_path):
+        self._migrationutils.export_vm(vm_name, dest_path, copy_snapshots_config=os_win_const.EXPORT_CONFIG_NO_SNAPSHOTS, copy_vm_storage=True, create_export_subdir=True)

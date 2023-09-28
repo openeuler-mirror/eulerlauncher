@@ -93,3 +93,17 @@ class Client(object):
         """
 
         return self._instances.delete(name)
+
+    @omnivirt_utils.response2dict
+    def take_snapshot(self, vm_name, snapshot_name, export_path):
+        """ Take snapshot
+        """
+
+        return self._instances.take_snapshot(vm_name, snapshot_name, export_path)
+
+    @omnivirt_utils.response2dict
+    def export_development_image(self, vm_name, image_name, export_path, pwd):
+        """ Export Python/Go/Java development image
+        """
+
+        return self._instances.export_development_image(vm_name, image_name, export_path, pwd)

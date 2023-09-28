@@ -24,6 +24,7 @@ class MacImageHandler(object):
         self.image_record_file = image_record_file
         self.base_dir = base_dir
         self.wget_bin = conf.conf.get('default', 'wget_dir')
+        self.qemu_img_bin = conf.conf.get('default', 'qemu_img_dir')
         self.LOG = logger
 
 
@@ -130,8 +131,8 @@ class MacImageHandler(object):
         if fmt != "qcow2":
             self.LOG.debug(f'Converting image file: {img_name} to {qcow2_name} ...')
             load_progress_bar_path = os.path.join(self.image_dir, "load_progress_bar_" + img_to_load)
-            cmd = 'qemu-img convert -p -O qcow2 {0} {1} > {2}'
-            subprocess.call(cmd.format(os.path.join(self.image_dir, img_name), os.path.join(self.image_dir, qcow2_name), load_progress_bar_path), shell=True)
+            cmd = 'sudo {0} convert -p -O qcow2 {1} {2} > {3}'
+            subprocess.call(cmd.format(self.qemu_img_bin, os.path.join(self.image_dir, img_name), os.path.join(self.image_dir, qcow2_name), load_progress_bar_path), shell=True)
             self.LOG.debug(f'Cleanup temp files ...')
             os.remove(os.path.join(self.image_dir, img_name))
             os.remove(load_progress_bar_path)

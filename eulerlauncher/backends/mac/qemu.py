@@ -11,6 +11,7 @@ class QemuDriver(object):
         host_arch_raw = platform.uname().machine
         host_arch = constants.ARCH_MAP[host_arch_raw]
         self.qemu_bin = conf.conf.get('default', 'qemu_dir')
+        self.qemu_img_bin = conf.conf.get('default', 'qemu_img_dir')
         self.uefi_file = os.path.join('/Library/Application\ Support/org.openeuler.eulerlauncher/','edk2-' + host_arch + '-code.fd')
         self.uefi_params = ',if=pflash,format=raw,readonly=on'
         self.vm_cpu = conf.conf.get('vm', 'cpu_num')
@@ -28,3 +29,16 @@ class QemuDriver(object):
         self.LOG.debug(' '.join(qemu_cmd))
         instance_process = subprocess.Popen(' '.join(qemu_cmd), shell=True)
         return instance_process
+
+    def take_and_export_snapshot(self, snapshot_name, vm_root_disk, export_image_name, dest_path):
+        take_snapshot_cmd = [
+            'sudo', self.qemu_img_bin, 'snapshot', '-c', f'{snapshot_name}', f'{vm_root_disk}'
+        ]
+        self.LOG.debug(' '.join(take_snapshot_cmd))
+        subprocess.call(' '.join(take_snapshot_cmd), shell=True)
+        export_image_cmd = [
+            'sudo', self.qemu_img_bin, 'convert', '-l', f'snapshot.name={snapshot_name}', '-O',
+            'qcow2', f'{vm_root_disk}', os.path.join(dest_path, f'{export_image_name}.qcow2')
+        ]
+        self.LOG.debug(' '.join(export_image_cmd))
+        subprocess.call(' '.join(export_image_cmd), shell=True)

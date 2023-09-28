@@ -58,15 +58,17 @@ brew install wget
 
 2. 配置**EulerLauncher**：
 
-    - 查看`qemu`及`wget`所处位置，`qemu`二进制文件在不同架构下名称不同，请根据自身情况选择正确的名称(Apple Silicon: qemu-system-aarch64; Intel: qemu-system-x86_64)：
+    - 查看`qemu`,`qemu-img`及`wget`所处位置，`qemu`二进制文件在不同架构下名称不同，请根据自身情况选择正确的名称(Apple Silicon: qemu-system-aarch64; Intel: qemu-system-x86_64)：
         ``` Shell
         which wget
         which qemu-system-{host_arch}
+        which qemu-img
         ```
         参考输出：
         ```
         /opt/homebrew/bin/wget
         /opt/homebrew/bin/qemu-system-aarch64
+        /opt/homebrew/bin/qemu-img
         ```
         查看完成后，记录路径结果，在接下来的步骤中将会使用到。
 
@@ -82,6 +84,7 @@ brew install wget
         work_dir = # eulerlauncher工作目录，用于存储虚拟机镜像、虚拟机文件等
         wget_dir = # wget的可执行文件路径，请参考上一步的内容进行配置
         qemu_dir = # qemu的可执行文件路径，请参考上一步的内容进行配置
+        qemu_img_dir = # qemu-img的可执行文件路径，请参考上一步的内容进行配置
         debug = True
 
         [vm]
