@@ -133,18 +133,18 @@ eulerlauncher download-image 22.03-LTS
 Downloading: 22.03-LTS, this might take a while, please check image status with "images" command.
 ```
 
-镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态：
+镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态，进度条格式为`([downloaded_bytes] [percentage] [download_speed] [remaining_download_time])`：
 
 ```Shell
 eulerlauncher images
 
-+-----------+----------+--------------+
-|   Images  | Location |    Status    |
-+-----------+----------+--------------+
-| 22.03-LTS |  Remote  | Downloadable |
-|   21.09   |  Remote  | Downloadable |
-| 22.03-LTS |  Local   | Downloading  |
-+-----------+----------+--------------+
++-----------+----------+------------------------------------+
+|   Images  | Location |               Status               |
++-----------+----------+------------------------------------+
+| 22.03-LTS |  Remote  |            Downloadable            |
+|   21.09   |  Remote  |            Downloadable            |
+| 22.03-LTS |  Local   | Downloading: 33792K  8% 4.88M 55s  |
++-----------+----------+------------------------------------+
 ```
 
 
@@ -170,7 +170,7 @@ eulerlauncher images
 eulerlauncher load-image --path {image_file_path} IMAGE_NAME
 ```
 
-当前支持加载的镜像格式有 `xxx.qcow2.xz`，`xxx.qcow2`
+当前支持加载的镜像格式有 `xxx.{qcow2, raw, vmdk, vhd, vhdx, qcow, vdi}.[xz]`
 
 例如：
 
@@ -185,13 +185,13 @@ Loading: 2203-load, this might take a while, please check image status with "ima
 ```Shell
 eulerlauncher images
 
-+-----------+----------+--------------+
-|   Images  | Location |    Status    |
-+-----------+----------+--------------+
-| 22.03-LTS |  Remote  | Downloadable |
-|   21.09   |  Remote  | Downloadable |
-| 2203-load |  Local   |   Loading    |
-+-----------+----------+--------------+
++-----------+----------+----------------------------+
+|   Images  | Location |           Status           |
++-----------+----------+----------------------------+
+| 22.03-LTS |  Remote  |       Downloadable         |
+|   21.09   |  Remote  |       Downloadable         |
+| 2203-load |  Local   |   Loading: (24.00/100%)    |
++-----------+----------+----------------------------+
 
 eulerlauncher images
 
@@ -255,6 +255,17 @@ eulerlauncher delete-instance {instance_name}
 ```
 根据虚拟机名称删除指定的虚拟机。
 
+5. 为虚拟机打快照，并导出为镜像
+```Shell
+eulerlauncher take-snapshot --snapshot_name snap --export_path path vm_name
+```
+通过`--snapshot_name`指定快照名称，`--export_path`指定导出镜像存放位置，`vm_name`为虚拟机名。
+
+6. 将虚拟机导出为主流编程框架开发镜像
+```Shell
+eulerlauncher export-development-image --image_name image --export_path path vm_name
+```
+通过`--image_name`指定导出镜像名称，`--export_path`指定导出镜像存放位置，`vm_name`为虚拟机名，默认导出为Python/Go/Java主流编程框架开发镜像。
 
 [1]: https://developer.apple.com/documentation/vmnet
 [2]: https://gitee.com/openeuler/eulerlauncher/releases
