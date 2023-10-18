@@ -10,9 +10,9 @@ class Instance(object):
         response = self.client.list_instances(request)
         return response
 
-    def create(self, name, image):
+    def create(self, name, image, arch):
         """Create instance"""
-        request = instances_pb2.CreateInstanceRequest(name=name, image=image)
+        request = instances_pb2.CreateInstanceRequest(name=name, image=image, arch=arch)
         response = self.client.create_instance(request)
         return response
     

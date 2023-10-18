@@ -135,10 +135,12 @@ EulerLauncher可执行文件包括以下几个部分：
 2. 构建`eulerlauncher.exe`:
 
 ``` Shell
-pyinstaller --clean --noconfirm specs\\cli-mac.spec
+pyinstaller --clean --noconfirm specs\\cli-win.spec
 ```
 
-3. 将`etc\bin`目录下的`config-env.bat`及`qemu-img`文件夹拷贝到制品目录，并进行压缩。
+3. 将`etc\bin`目录下的`config-env.bat`,`qemu`及`qemu-img`文件夹拷贝到制品目录。
+
+4. 在制品目录创建`etc`文件夹，将`logos\favicon.png`复制到该目录下，并在该目录下创建`eulerlauncher.conf`文件，最后将制品目录压缩打包
 
 [1]: https://www.python.org/
 [2]: https://brew.sh/

@@ -1,4 +1,8 @@
 import json
+import subprocess
+import time
+import psutil
+
 
 from os_win import constants as os_win_const
 from os_win import exceptions as os_win_exc
@@ -188,3 +192,43 @@ class VMOps(object):
 
     def export_vm(self, vm_name, dest_path):
         self._migrationutils.export_vm(vm_name, dest_path, copy_snapshots_config=os_win_const.EXPORT_CONFIG_NO_SNAPSHOTS, copy_vm_storage=True, create_export_subdir=True)
+
+    def parse_ip_addr(self, mac_addr):
+        ip = ''
+        macs = mac_addr.split(':')
+        mac_addr1 = '-'.join(macs)
+        cmd = f'arp -a|findstr {mac_addr1}'
+        start_time = time.time()
+        while (ip == '' and time.time() - start_time < 30):
+            pr = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+            arp_result = pr.stdout.decode('gbk').strip()
+            founded = False
+            if arp_result:
+                # The result for 'arp -a' in MacOS is different with Linux, it erase
+                # the first 0 if the first digit is 0 for this mac section, add it
+                # back before compare
+                try:
+                    arp_ip = arp_result.split()[0]
+                    mac = arp_result.split()[1]
+                except IndexError:
+                    continue
+                if mac_addr1 == mac:
+                    ip = arp_ip
+                    founded = True
+            if founded:
+                break
+
+        return ip
+
+    def check_vm_state(self, instance):
+        if instance['identification']['type'] == 'pid':
+            instance_pid = instance['identification']['id']
+            if instance_pid in psutil.pids() and \
+                psutil.Process(instance_pid).status() == 'running':
+                children = psutil.Process(instance_pid).children(recursive=True)
+                for chird in children:
+                    if chird.name().startswith('qemu') and chird.is_running():
+                        return constants.VM_STATE_MAP[2]
+            return constants.VM_STATE_MAP[3]
+        else:
+            return constants.VM_STATE_MAP[99]

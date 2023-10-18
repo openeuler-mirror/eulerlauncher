@@ -20,10 +20,12 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
         self.instance_record_file = os.path.join(self.instance_dir, 'instances.json')
         self.image_dir = os.path.join(self.work_dir, 'images')
         self.img_record_file = os.path.join(self.image_dir, 'images.json')
+        self.pattern = self.CONF.conf.get('default', 'pattern')
+        self.host_os = host_os
         if host_os == 'Win':
             from eulerlauncher.backends.win import instance_handler as win_instance_handler
             self.backend = win_instance_handler.WinInstanceHandler(
-                self.CONF, self.work_dir, self.instance_dir, self.image_dir, self.img_record_file, LOG)
+                self.CONF, self.work_dir, self.instance_dir, self.image_dir, self.img_record_file, LOG, self.svc_base_dir)
         elif host_os == 'MacOS':
             from eulerlauncher.backends.mac import instance_handler as mac_instance_handler
             self.backend = mac_instance_handler.MacInstanceHandler(
@@ -48,12 +50,22 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
 
     def create_instance(self, request, context):
         LOG.debug(f"Get request to create instance: {request.name} with image {request.image} ...")
-        
+        # LOG.debug(self.pattern)
+        if self.host_os == 'Win':
+            if self.pattern == 'hyper-v' and request.arch == 'arm':
+                msg = f'Error: The pattern of hyper-v can not create the instance with the arm architecture, please choose correct argument : "--arch"'
+                return instances_pb2.CreateInstanceResponse(ret=2, msg=msg)
         all_img = utils.load_json_data(self.img_record_file)
         if request.image not in all_img['local'].keys():
             msg = f'Error: Image "{request.image}" is not available locally, please check again or (down)load it before using ...'
             return instances_pb2.CreateInstanceResponse(ret=2, msg=msg)
-
+        # LOG.debug(os.path.splitext(all_img['local'][request.image]['path']))
+        # LOG.debug(request.arch)
+        if self.host_os == 'Win':
+            format = os.path.splitext(all_img['local'][request.image]['path'])[-1]
+            if (format == '.vhdx' and self.pattern == 'qemu') or (format == '.qcow2' and self.pattern == 'hyper-v'):
+                msg = f'Error: Image "{request.image}" is "{format}" format but pattern is {self.pattern}, please choose correct pattern or correct image.'
+                return instances_pb2.CreateInstanceResponse(ret=2, msg=msg)
         all_instances = utils.load_json_data(self.instance_record_file)
         if request.name in all_instances['instances'].keys():
             msg = f'Error: Instance with name {request.name} already exist, please specify another name.'
@@ -65,7 +77,7 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
             return instances_pb2.CreateInstanceResponse(ret=2, msg=msg)
 
         vm = self.backend.create_instance(
-            request.name, request.image, self.instance_record_file, all_instances, all_img, False, 0, 0)
+            request.name, request.image, self.instance_record_file, all_instances, all_img, False, 0, 0, request.arch)
         msg = f'Successfully created {request.name} with image {request.image}'
         return instances_pb2.CreateInstanceResponse(ret=1, msg=msg, instance=vm)
     

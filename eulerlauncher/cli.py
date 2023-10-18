@@ -69,7 +69,6 @@ def download_image(name):
 @click.argument('name')
 @click.option('--path', help='Image file to load')
 def load_image(name, path):
-
     try:
         ret = launcher_client.load_image(name, path)
     except Exception:
@@ -104,10 +103,11 @@ def delete_instance(name):
 @click.command()
 @click.argument('vm_name')
 @click.option('--image', help='Image to build vm')
-def launch(vm_name, image):
+@click.option('--arch', default='x86', type=click.Choice(['x86', 'arm'], case_sensitive=False), help='Architecture of instance')
+def launch(vm_name, image, arch):
 
     try:
-        ret = launcher_client.create_instance(vm_name, image)
+        ret = launcher_client.create_instance(vm_name, image, arch)
     except Exception:
         print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
     else:
@@ -153,9 +153,18 @@ def export_development_image(vm_name, image_name, export_path):
     else:
         print(ret['msg'])
 
+# @click.command()
+# @click.option('--count', default=1, help='Number of greetings.')
+# @click.option('--name', prompt='Your name', help='The person to greet.')
+# def hello(count, name):
+#     """Simple program that greets NAME for a total of COUNT times."""
+#     for x in range(count):
+#         click.echo('Hello %s!' % name)
+
 @click.group()
 def cli():
     pass
+
 
 
 if __name__ == '__main__':

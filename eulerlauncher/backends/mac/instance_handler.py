@@ -101,7 +101,7 @@ class MacInstanceHandler(object):
         except KeyError:
             return 0
 
-    def create_instance(self, name, image_id, instance_record, all_instances, all_images, is_same, mac_address, uuid):
+    def create_instance(self, name, image_id, instance_record, all_instances, all_images, is_same, mac_address, uuid, arch='x86'):
         # Create dir for the instance
         if not is_same:
             vm_uuid = uuidutils.generate_uuid()
@@ -197,7 +197,7 @@ class MacInstanceHandler(object):
         self.driver.take_and_export_snapshot(snapshot_name, vm_root_disk_dst_path, snapshot_name, dest_path)
         # a little hack here, since the running vm's image is already deleted, change the local image path to the copyed image path
         all_images['local'][vm_img_id]['path'] = vm_root_disk_dst_path
-        self.create_instance(name, vm_img_id, instance_record, all_instances, all_images, True, mac_address, vm_uuid)
+        self.create_instance(name, vm_img_id, instance_record, all_instances, all_images, True, mac_address, vm_uuid, 'x86')
         os.remove(vm_root_disk_dst_path)
         return os.path.join(dest_path, f'{snapshot_name}.qcow2')
 
