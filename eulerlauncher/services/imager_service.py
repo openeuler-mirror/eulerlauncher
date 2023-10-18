@@ -64,6 +64,7 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
         return images_pb2.GeneralImageResponse(ret=0, msg=msg)
 
     def load_image(self, request, context):
+
         LOG.debug(f"Get request to load image: {request.name} from path: {request.path} ...")
 
         supported, fmt = omni_utils.check_file_tail(

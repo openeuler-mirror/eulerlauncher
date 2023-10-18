@@ -19,7 +19,9 @@ class Image(object):
 
     def load(self, name, path):
         """Load local image file"""
+
         request = images_pb2.LoadImageRequest(name=name, path=path)
+
         response = self.client.load_image(request)
         return response
 

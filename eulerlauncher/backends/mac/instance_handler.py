@@ -100,7 +100,7 @@ class MacInstanceHandler(object):
         except KeyError:
             return 0
 
-    def create_instance(self, name, image_id, instance_record, all_instances, all_images):
+    def create_instance(self, name, image_id, instance_record, all_instances, all_images, arch='x86'):
         # Create dir for the instance
         vm_uuid = uuidutils.generate_uuid()
         vm_dict = {

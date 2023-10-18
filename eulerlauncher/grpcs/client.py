@@ -41,7 +41,7 @@ class Client(object):
     def load_image(self, name, path):
         """ Load local image file
         """
-        
+
         if not os.path.exists(path):
             err_msg = {
                 'ret': 1,
@@ -80,12 +80,13 @@ class Client(object):
         return self._instances.list()
 
     @omnivirt_utils.response2dict
-    def create_instance(self, name, image):
+    def create_instance(self, name, image, arch):
         """ Create instance
         :return: dict -- dict of instance's info
         """
 
-        return self._instances.create(name, image)
+
+        return self._instances.create(name, image, arch)
 
     @omnivirt_utils.response2dict
     def delete_instance(self, name):

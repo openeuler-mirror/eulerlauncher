@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2 as images__pb2
+from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2 as eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2
 
 
 class ImageGrpcServiceStub(object):
@@ -16,23 +16,23 @@ class ImageGrpcServiceStub(object):
         """
         self.list_images = channel.unary_unary(
                 '/omnivirt.ImageGrpcService/list_images',
-                request_serializer=images__pb2.ListImageRequest.SerializeToString,
-                response_deserializer=images__pb2.ListImageResponse.FromString,
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.ListImageRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.ListImageResponse.FromString,
                 )
         self.download_image = channel.unary_unary(
                 '/omnivirt.ImageGrpcService/download_image',
-                request_serializer=images__pb2.DownloadImageRequest.SerializeToString,
-                response_deserializer=images__pb2.GeneralImageResponse.FromString,
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.DownloadImageRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.FromString,
                 )
         self.load_image = channel.unary_unary(
                 '/omnivirt.ImageGrpcService/load_image',
-                request_serializer=images__pb2.LoadImageRequest.SerializeToString,
-                response_deserializer=images__pb2.GeneralImageResponse.FromString,
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.LoadImageRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.FromString,
                 )
         self.delete_image = channel.unary_unary(
                 '/omnivirt.ImageGrpcService/delete_image',
-                request_serializer=images__pb2.DeleteImageRequest.SerializeToString,
-                response_deserializer=images__pb2.GeneralImageResponse.FromString,
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.DeleteImageRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.FromString,
                 )
 
 
@@ -68,23 +68,23 @@ def add_ImageGrpcServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'list_images': grpc.unary_unary_rpc_method_handler(
                     servicer.list_images,
-                    request_deserializer=images__pb2.ListImageRequest.FromString,
-                    response_serializer=images__pb2.ListImageResponse.SerializeToString,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.ListImageRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.ListImageResponse.SerializeToString,
             ),
             'download_image': grpc.unary_unary_rpc_method_handler(
                     servicer.download_image,
-                    request_deserializer=images__pb2.DownloadImageRequest.FromString,
-                    response_serializer=images__pb2.GeneralImageResponse.SerializeToString,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.DownloadImageRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.SerializeToString,
             ),
             'load_image': grpc.unary_unary_rpc_method_handler(
                     servicer.load_image,
-                    request_deserializer=images__pb2.LoadImageRequest.FromString,
-                    response_serializer=images__pb2.GeneralImageResponse.SerializeToString,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.LoadImageRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.SerializeToString,
             ),
             'delete_image': grpc.unary_unary_rpc_method_handler(
                     servicer.delete_image,
-                    request_deserializer=images__pb2.DeleteImageRequest.FromString,
-                    response_serializer=images__pb2.GeneralImageResponse.SerializeToString,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.DeleteImageRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -108,8 +108,8 @@ class ImageGrpcService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.ImageGrpcService/list_images',
-            images__pb2.ListImageRequest.SerializeToString,
-            images__pb2.ListImageResponse.FromString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.ListImageRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.ListImageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -125,8 +125,8 @@ class ImageGrpcService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.ImageGrpcService/download_image',
-            images__pb2.DownloadImageRequest.SerializeToString,
-            images__pb2.GeneralImageResponse.FromString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.DownloadImageRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -142,8 +142,8 @@ class ImageGrpcService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.ImageGrpcService/load_image',
-            images__pb2.LoadImageRequest.SerializeToString,
-            images__pb2.GeneralImageResponse.FromString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.LoadImageRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -159,7 +159,7 @@ class ImageGrpcService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.ImageGrpcService/delete_image',
-            images__pb2.DeleteImageRequest.SerializeToString,
-            images__pb2.GeneralImageResponse.FromString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.DeleteImageRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_images__pb2.GeneralImageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -22,6 +22,7 @@ class WinImageHandler(object):
         self.image_dir = image_dir
         self.image_record_file = image_record_file
         self.LOG = logger
+        self.pattern = conf.conf.get('default', 'pattern')
 
     def download_and_transform(self, images, img_to_download):
 
@@ -40,25 +41,31 @@ class WinImageHandler(object):
     
         # Decompress the image
         self.LOG.debug(f'Decompressing image file: {img_name} ...')
-        qcow2_name = img_name[:-3]
+        qcow2_name = img_to_download + '.qcow2'
         with open(os.path.join(self.image_dir, img_name), 'rb') as pr, open(os.path.join(self.image_dir, qcow2_name), 'wb') as pw:
             data = pr.read()
             data_dec = lzma.decompress(data)
             pw.write(data_dec)
-    
-        # Convert the qcow2 img to vhdx
-        vhdx_name = img_to_download + '.vhdx'
-        self.LOG.debug(f'Converting image file: {img_name} to {vhdx_name} ...')
-        with powershell.PowerShell('GBK') as ps:
-            cmd = 'qemu-img convert -O vhdx {0} {1}'
-            outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, qcow2_name), os.path.join(self.image_dir, vhdx_name)))
 
-        self.LOG.debug(f'Cleanup temp files ...')
-        os.remove(os.path.join(self.image_dir, qcow2_name))
+        image_name = ""
+        if self.pattern == "hyper-v":
+            # Convert the qcow2 img to vhdx
+
+            vhdx_name = img_to_download + '.vhdx'
+            image_name = vhdx_name
+            self.LOG.debug(f'Converting image file: {img_name} to {vhdx_name} ...')
+            with powershell.PowerShell('GBK') as ps:
+                cmd = 'qemu-img convert -O vhdx {0} {1}'
+                outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, qcow2_name), os.path.join(self.image_dir, vhdx_name)))
+
+            self.LOG.debug(f'Cleanup temp files ...')
+            os.remove(os.path.join(self.image_dir, qcow2_name))
+        elif self.pattern == 'qemu':
+            image_name = qcow2_name
 
         # Record local image
         img_dict['status'] = constants.IMAGE_STATUS_READY
-        img_dict['path'] = os.path.join(self.image_dir, vhdx_name)
+        img_dict['path'] = os.path.join(self.image_dir, image_name)
         images['local'][img_to_download] = img_dict
         omni_utils.save_json_data(self.image_record_file, images)
         self.LOG.debug(f'Image: {img_to_download} is ready ...')
@@ -93,31 +100,33 @@ class WinImageHandler(object):
         image.status = constants.IMAGE_STATUS_LOADING
         images['local'][image.name] = image.to_dict()
         omni_utils.save_json_data(self.image_record_file, images)
-
+        qcow2_name = f'{img_to_load}.qcow2'
         if fmt == 'qcow2':
-            qcow2_name = f'{img_to_load}.qcow2'
             shutil.copyfile(path, os.path.join(self.image_dir, qcow2_name))
         else:
             # Decompress the image
             self.LOG.debug(f'Decompressing image file: {path} ...')
-            qcow2_name = f'{img_to_load}.qcow2'
             with open(path, 'rb') as pr, open(os.path.join(self.image_dir, qcow2_name), 'wb') as pw:
                 data = pr.read()
                 data_dec = lzma.decompress(data)
                 pw.write(data_dec)
-        
-        # Convert the qcow2 img to vhdx
-        vhdx_name = img_to_load + '.vhdx'
-        self.LOG.debug(f'Converting image file: {qcow2_name} to {vhdx_name} ...')
-        with powershell.PowerShell('GBK') as ps:
-            cmd = 'qemu-img convert -O vhdx {0} {1}'
-            outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, qcow2_name), os.path.join(self.image_dir, vhdx_name)))
-        self.LOG.debug(f'Cleanup temp files ...')
-        os.remove(os.path.join(self.image_dir, qcow2_name))
+        image_name = ''
+        if self.pattern == 'hyper-v':
+            # Convert the qcow2 img to vhdx
+            vhdx_name = img_to_load + '.vhdx'
+            self.LOG.debug(f'Converting image file: {qcow2_name} to {vhdx_name} ...')
+            with powershell.PowerShell('GBK') as ps:
+                cmd = 'qemu-img convert -O vhdx {0} {1}'
+                outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, qcow2_name), os.path.join(self.image_dir, vhdx_name)))
+            self.LOG.debug(f'Cleanup temp files ...')
+            os.remove(os.path.join(self.image_dir, qcow2_name))
+            image_name = vhdx_name
+        elif self.pattern == 'qemu':
+            image_name = qcow2_name
 
         # Record local image
-        image.path = os.path.join(self.image_dir, vhdx_name)
+        image.path = os.path.join(self.image_dir, image_name)
         image.status = constants.IMAGE_STATUS_READY
         images['local'][image.name] = image.to_dict()
         omni_utils.save_json_data(self.image_record_file, images)
-        self.LOG.debug(f'Image: {vhdx_name} is ready ...')
+        self.LOG.debug(f'Image: {image_name} is ready ...')

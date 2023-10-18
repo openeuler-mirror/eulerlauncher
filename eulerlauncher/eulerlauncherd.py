@@ -148,6 +148,7 @@ if __name__ == '__main__':
         args = parser.parse_args()
         conf_file = args.conf_file
         base_dir = args.base_dir
+        print(base_dir)
     else:
         conf_file = os.path.join(os.getcwd(), 'etc', 'eulerlauncher.conf')
         base_dir = None
