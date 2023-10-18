@@ -139,14 +139,15 @@ class WinImageHandler(object):
         if self.pattern == 'hyper-v':
             # Convert the qcow2 img to vhdx
             vhdx_name = img_to_load + '.vhdx'
-            self.LOG.debug(f'Converting image file: {qcow2_name} to {vhdx_name} ...')
-            load_progress_bar_path = os.path.join(self.image_dir, "load_progress_bar_" + img_to_load)
-            with powershell.PowerShell('GBK') as ps:
-                cmd = 'qemu-img convert -p -O vhdx {0} {1} | Out-File -FilePath {2}'
-                outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, img_name), os.path.join(self.image_dir, vhdx_name), load_progress_bar_path))
-            self.LOG.debug(f'Cleanup temp files ...')
-            os.remove(os.path.join(self.image_dir, qcow2_name))
-            os.remove(load_progress_bar_path)
+            if fmt != 'vhdx':
+                self.LOG.debug(f'Converting image file: {qcow2_name} to {vhdx_name} ...')
+                load_progress_bar_path = os.path.join(self.image_dir, "load_progress_bar_" + img_to_load)
+                with powershell.PowerShell('GBK') as ps:
+                    cmd = 'qemu-img convert -p -O vhdx {0} {1} | Out-File -FilePath {2}'
+                    outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, img_name), os.path.join(self.image_dir, vhdx_name), load_progress_bar_path))
+                self.LOG.debug(f'Cleanup temp files ...')
+                os.remove(os.path.join(self.image_dir, qcow2_name))
+                os.remove(load_progress_bar_path)
             image_name = vhdx_name
         elif self.pattern == 'qemu':
             image_name = qcow2_name
@@ -156,7 +157,7 @@ class WinImageHandler(object):
         image.status = constants.IMAGE_STATUS_READY
         images['local'][image.name] = image.to_dict()
         omni_utils.save_json_data(self.image_record_file, images)
-        self.LOG.debug(f'Image: {vhdx_name} is ready ...')
+        self.LOG.debug(f'Image: {image_name} is ready ...')
 
     def load_progress_bar(self, img_name):
         progress_bar_lines = []
@@ -168,4 +169,3 @@ class WinImageHandler(object):
             return constants.IMAGE_STATUS_LOADING + ": " + progress_bar_lines[-2].strip()
         else:
             return constants.IMAGE_STATUS_LOADING
-        self.LOG.debug(f'Image: {image_name} is ready ...')
