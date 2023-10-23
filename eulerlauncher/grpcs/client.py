@@ -1,8 +1,8 @@
 import grpc
 import os
 
-from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
-from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2, instances_pb2_grpc
+from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2_grpc
+from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2_grpc
 from eulerlauncher.grpcs import images, instances
 from eulerlauncher.utils import constants
 from eulerlauncher.utils import utils as omnivirt_utils
