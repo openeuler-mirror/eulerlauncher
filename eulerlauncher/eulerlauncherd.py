@@ -12,8 +12,8 @@ import subprocess
 import sys
 import time
 
-from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
-from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2, instances_pb2_grpc
+from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2_grpc
+from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2_grpc
 from eulerlauncher.services import imager_service, instance_service
 from eulerlauncher.utils import constants
 from eulerlauncher.utils import objs
