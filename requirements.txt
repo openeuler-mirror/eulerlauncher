@@ -1,6 +1,7 @@
 argparse
 click
 configparser
+chardet
 dnspython
 grpcio
 grpcio-tools
@@ -14,6 +15,7 @@ oslo.i18n
 oslo.log
 oslo.serialization
 oslo.utils
+paramiko
 Pillow
 prettytable
 protobuf

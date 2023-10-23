@@ -5,6 +5,7 @@ import signal
 import subprocess
 import sys
 import time
+import paramiko
 
 from oslo_utils import uuidutils
 
@@ -100,16 +101,21 @@ class MacInstanceHandler(object):
         except KeyError:
             return 0
 
-    def create_instance(self, name, image_id, instance_record, all_instances, all_images, arch='x86'):
+    def create_instance(self, name, image_id, instance_record, all_instances, all_images, is_same, mac_address, uuid, arch='x86'):
         # Create dir for the instance
-        vm_uuid = uuidutils.generate_uuid()
+        if not is_same:
+            vm_uuid = uuidutils.generate_uuid()
+            vm_mac_address = omni_utils.generate_mac()
+        else:
+            vm_uuid = uuid
+            vm_mac_address = mac_address
         vm_dict = {
             'name': name,
             'uuid': vm_uuid,
             'image': image_id,
             'vm_state': constants.VM_STATE_MAP[99],
             'ip_address': 'N/A',
-            'mac_address': omni_utils.generate_mac(),
+            'mac_address': vm_mac_address,
             'identification': {
                 'type': 'pid',
                 'id': None
@@ -175,3 +181,53 @@ class MacInstanceHandler(object):
 
         return 0
 
+    def _get_vm_img_id_by_name(self, name):
+        instance = omni_utils.load_json_data(self.instance_record_file)['instances'][name]
+        return instance['image']
+
+    def take_snapshot(self, name, snapshot_name, dest_path, all_instances, all_images, instance_record):
+        vm_img_id = self._get_vm_img_id_by_name(name)
+        vm_root_disk_src_path = os.path.join(self.instance_dir, name, vm_img_id + '.qcow2')
+        vm_root_disk_dst_path = os.path.join(self.instance_dir, vm_img_id + '.qcow2')
+        mac_address = all_instances['instances'][name]['mac_address']
+        vm_uuid = all_instances['instances'][name]['uuid']
+        # shutdown the vm first for taking snapshot
+        shutil.copyfile(vm_root_disk_src_path, vm_root_disk_dst_path)
+        self.delete_instance(name, instance_record, all_instances)
+        self.driver.take_and_export_snapshot(snapshot_name, vm_root_disk_dst_path, snapshot_name, dest_path)
+        # a little hack here, since the running vm's image is already deleted, change the local image path to the copyed image path
+        all_images['local'][vm_img_id]['path'] = vm_root_disk_dst_path
+        self.create_instance(name, vm_img_id, instance_record, all_instances, all_images, True, mac_address, vm_uuid, 'x86')
+        os.remove(vm_root_disk_dst_path)
+        return os.path.join(dest_path, f'{snapshot_name}.qcow2')
+
+    def _get_vm_ip_by_name(self, name):
+        instance = omni_utils.load_json_data(self.instance_record_file)['instances'][name]
+        if not instance['ip_address']:
+            ip_address = self._parse_ip_addr(instance['mac_address'])
+        else:
+            ip_address = instance['ip_address']
+        return ip_address
+
+    def make_development_image(self, name, pwd):
+        ssh_client = paramiko.SSHClient()
+        try:
+            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh_client.connect(self._get_vm_ip_by_name(name), 22, "root", pwd)
+            bash_command = """
+            if which apt >/dev/null 2>&1;
+                then apt install python3-dev golang openjdk-11-jdk
+            elif which yum >/dev/null 2>&1;
+                then yum install -y python3-devel golang java-11-openjdk-devel
+            elif which dnf >/dev/null 2>&1;
+                then dnf install -y python3-devel golang java-11-openjdk-devel
+            fi
+            """
+            stdin, stdout, stderr = ssh_client.exec_command(bash_command)
+
+            self.LOG.debug(stdout.read().decode())
+            ssh_client.close()
+            return 0
+        except Exception as e:
+            self.LOG.debug(f"install development environment failed: {str(e)}")
+            return 1

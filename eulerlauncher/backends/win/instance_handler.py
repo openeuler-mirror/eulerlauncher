@@ -1,6 +1,8 @@
 import os
 import shutil
 import time
+import paramiko
+from glob import glob
 import psutil
 
 from oslo_utils import uuidutils
@@ -66,7 +68,7 @@ class WinInstanceHandler(object):
             vm_list = _vmops.list_instances()
         return vm_list
 
-    def create_instance(self, name, image_id, instance_record, all_instances, all_images, arch='x86'):
+    def create_instance(self, name, image_id, instance_record, all_instances, all_images, is_same, mac_address, uuid, arch='x86'):
         # Create dir for the instance
         instance_path = os.path.join(self.instance_dir, name)
         os.makedirs(instance_path)
@@ -257,3 +259,34 @@ class WinInstanceHandler(object):
         self.LOG.debug("Power on instance", instance=instance)
         self._set_vm_state(instance, os_win_const.HYPERV_VM_STATE_ENABLED)
 
+    def take_snapshot(self, name, snapshot_name, dest_path, all_instances, all_images, instance_record):
+        _vmops.take_snapshot(name, snapshot_name)
+        _vmops.export_vm(name, os.path.join(dest_path))
+        os.rename(glob(os.path.join(dest_path, name, 'Virtual Hard Disks', '*.vhdx'))[0], os.path.join(dest_path, name, 'Virtual Hard Disks', f'{snapshot_name}.vhdx'))
+        shutil.move(os.path.join(dest_path, name, 'Virtual Hard Disks', f'{snapshot_name}.vhdx'), os.path.join(dest_path))
+        # remove the exported file dir
+        shutil.rmtree(os.path.join(dest_path, name))
+        return os.path.join(dest_path, f'{snapshot_name}.vhdx')
+
+    def make_development_image(self, name, pwd):
+        ssh_client = paramiko.SSHClient()
+        try:
+            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh_client.connect(_vmops.get_instance_ip_addr(name), 22, "root", pwd)
+            bash_command = """
+            if which apt >/dev/null 2>&1;
+                then apt install python3-dev golang openjdk-11-jdk
+            elif which yum >/dev/null 2>&1;
+                then yum install -y python3-devel golang java-11-openjdk-devel
+            elif which dnf >/dev/null 2>&1;
+                then dnf install -y python3-devel golang java-11-openjdk-devel
+            fi
+            """
+            stdin, stdout, stderr = ssh_client.exec_command(bash_command)
+
+            self.LOG.debug(stdout.read().decode())
+            ssh_client.close()
+            return 0
+        except Exception as e:
+            self.LOG.debug(f"install development environment failed: {str(e)}")
+            return 1

@@ -50,7 +50,7 @@ class Client(object):
             return err_msg
         
         supported = False
-        for tp in constants.IMAGE_LOAD_SUPPORTED_TYPES:
+        for tp in constants.IMAGE_LOAD_SUPPORTED_TYPES + constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED:
             if path.endswith(tp):
                 supported = True
                 break
@@ -94,3 +94,17 @@ class Client(object):
         """
 
         return self._instances.delete(name)
+
+    @omnivirt_utils.response2dict
+    def take_snapshot(self, vm_name, snapshot_name, export_path):
+        """ Take snapshot
+        """
+
+        return self._instances.take_snapshot(vm_name, snapshot_name, export_path)
+
+    @omnivirt_utils.response2dict
+    def export_development_image(self, vm_name, image_name, export_path, pwd):
+        """ Export Python/Go/Java development image
+        """
+
+        return self._instances.export_development_image(vm_name, image_name, export_path, pwd)

@@ -14,7 +14,8 @@ IMAGE_STATUS_DOWNLOADING = 'Downloading'
 IMAGE_STATUS_LOADING = 'Loading'
 IMAGE_STATUS_READY = 'Ready'
 
-IMAGE_LOAD_SUPPORTED_TYPES = ['qcow2.xz', 'qcow2']
+IMAGE_LOAD_SUPPORTED_TYPES = ['qcow2', 'raw', 'vmdk', 'vhd', 'vhdx', 'qcow', 'vdi']
+IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED = ['qcow2.xz', 'raw.xz', 'vmdk.xz', 'vhd.xz', 'vhdx.xz', 'qcow.xz', 'vdi.xz']
 
 ARCH_MAP = {
     'AMD64': 'x86_64',

@@ -77,7 +77,7 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
             return instances_pb2.CreateInstanceResponse(ret=2, msg=msg)
 
         vm = self.backend.create_instance(
-            request.name, request.image, self.instance_record_file, all_instances, all_img, request.arch)
+            request.name, request.image, self.instance_record_file, all_instances, all_img, False, 0, 0, request.arch)
         msg = f'Successfully created {request.name} with image {request.image}'
         return instances_pb2.CreateInstanceResponse(ret=1, msg=msg, instance=vm)
     
@@ -91,3 +91,31 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
         self.backend.delete_instance(request.name, self.instance_record_file, all_instances)
         msg = f'Successfully deleted instance: {request.name}.'
         return instances_pb2.DeleteInstanceResponse(ret=1, msg=msg)
+
+    def take_snapshot(self, request, context):
+        LOG.debug(f"Get request to take snapshot: {request.name} with snapshot name {request.snapshot}, export to path: {request.dest_path}...")
+        all_img = utils.load_json_data(self.img_record_file)
+        all_instances = utils.load_json_data(self.instance_record_file)
+        if request.name not in all_instances['instances'].keys():
+            msg = f'Error: Instance with name {request.name} does not exist.'
+            return instances_pb2.TakeSnapshotResponse(msg=msg)
+        export_path = self.backend.take_snapshot(request.name, request.snapshot, request.dest_path, all_instances, all_img, self.instance_record_file)
+        msg = f'Successfully take snapshot: {request.snapshot} of vm: {request.name} and export snapshot image to {export_path}.'
+        return instances_pb2.TakeSnapshotResponse(msg=msg)
+
+    def export_development_image(self, request, context):
+        LOG.debug(f"Get request to export Python/Go/Java development image for: {request.name} with image name {request.image}, export to path: {request.dest_path}...")
+        all_img = utils.load_json_data(self.img_record_file)
+        all_instances = utils.load_json_data(self.instance_record_file)
+        if request.name not in all_instances['instances'].keys():
+            msg = f'Error: Instance with name {request.name} does not exist.'
+            return instances_pb2.ExportDevelopmentImageResponse(msg=msg)
+        result = self.backend.make_development_image(request.name, request.pwd)
+        if result != 0:
+            LOG.debug(f"install Python/Go/Java environment for vm {request.name} failed!")
+            msg = f"install Python/Go/Java environment for vm {request.name} failed!"
+            return instances_pb2.ExportDevelopmentImageResponse(msg=msg)
+        LOG.debug(f"vm: {request.name} install Python/Go/Java development environment finished")
+        export_path = self.backend.take_snapshot(request.name, request.image, request.dest_path, all_instances, all_img, self.instance_record_file)
+        msg = f'Successfully export Python/Go/Java development image: {request.image} of vm: {request.name} and export development image to {export_path}.'
+        return instances_pb2.ExportDevelopmentImageResponse(msg=msg)

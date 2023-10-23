@@ -29,6 +29,16 @@ class InstanceGrpcServiceStub(object):
                 request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceRequest.SerializeToString,
                 response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceResponse.FromString,
                 )
+        self.take_snapshot = channel.unary_unary(
+                '/omnivirt.InstanceGrpcService/take_snapshot',
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.TakeSnapshotRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.TakeSnapshotResponse.FromString,
+                )
+        self.export_development_image = channel.unary_unary(
+                '/omnivirt.InstanceGrpcService/export_development_image',
+                request_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ExportDevelopmentImageRequest.SerializeToString,
+                response_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ExportDevelopmentImageResponse.FromString,
+                )
 
 
 class InstanceGrpcServiceServicer(object):
@@ -52,6 +62,18 @@ class InstanceGrpcServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def take_snapshot(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def export_development_image(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_InstanceGrpcServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -69,6 +91,16 @@ def add_InstanceGrpcServiceServicer_to_server(servicer, server):
                     servicer.delete_instance,
                     request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceRequest.FromString,
                     response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceResponse.SerializeToString,
+            ),
+            'take_snapshot': grpc.unary_unary_rpc_method_handler(
+                    servicer.take_snapshot,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.TakeSnapshotRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.TakeSnapshotResponse.SerializeToString,
+            ),
+            'export_development_image': grpc.unary_unary_rpc_method_handler(
+                    servicer.export_development_image,
+                    request_deserializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ExportDevelopmentImageRequest.FromString,
+                    response_serializer=eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ExportDevelopmentImageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -128,5 +160,39 @@ class InstanceGrpcService(object):
         return grpc.experimental.unary_unary(request, target, '/omnivirt.InstanceGrpcService/delete_instance',
             eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceRequest.SerializeToString,
             eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.DeleteInstanceResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def take_snapshot(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/omnivirt.InstanceGrpcService/take_snapshot',
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.TakeSnapshotRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.TakeSnapshotResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def export_development_image(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/omnivirt.InstanceGrpcService/export_development_image',
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ExportDevelopmentImageRequest.SerializeToString,
+            eulerlauncher_dot_grpcs_dot_eulerlauncher__grpc_dot_instances__pb2.ExportDevelopmentImageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

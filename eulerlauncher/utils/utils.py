@@ -4,6 +4,7 @@ import os
 import random
 from threading import Thread
 import uuid
+import chardet
 
 
 from google.protobuf.json_format import MessageToDict
@@ -92,3 +93,9 @@ def check_file_tail(file_name, to_check):
             break
     
     return ret, ret_fmt
+
+def detect_encoding(file_path):
+    with open(file_path, 'rb') as file:
+        raw_data = file.read()
+        result = chardet.detect(raw_data)
+    return result['encoding']
