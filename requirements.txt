@@ -25,3 +25,6 @@ PyYAML
 six
 urllib3
 wget
+pywebview
+sqlalchemy
+httpx

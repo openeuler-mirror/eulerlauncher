@@ -23,14 +23,14 @@ class Config:
     ##
     # 程序基础配置信息
     ##
-    appName = 'PPX'  # 应用名称
-    appNameEN = 'ppx'    # 应用名称-英文（用于生成缓存文件夹，必须是英文）
-    appVersion = "V4.1.0"  # 应用版本号
-    appDeveloper = "PanGao"  # 应用开发者
-    appBlogs = "https://blog.pangao.vip"  # 个人博客
-    appPackage = 'vip.pangao'    # 应用包名，用于在本地电脑生成 vip.pangao.ppx 唯一文件夹
-    appUpdateUrl = 'https://api.github.com/repos/pangao1990/ppx/releases/latest'    # 获取程序更新信息 https://api.github.com/repos/pangao1990/ppx/releases/latest
-    appISSID = 'F35003AB-441A-C0A6-4527-937E6A02F789'    # Inno Setup 打包唯一编号。在执行 pnpm run init 之前，请设置为空，程序会自动生成唯一编号，生成后请勿修改！！！
+    appName = 'EulerLauncher'  # 应用名称
+    appNameEN = 'EulerLauncher'    # 应用名称-英文（用于生成缓存文件夹，必须是英文）
+    appVersion = "V0.4"  # 应用版本号
+    appDeveloper = "EulerLauncher"  # 应用开发者
+    appBlogs = "https://gitee.com/openeuler/eulerlauncher"  # 项目首页
+    appPackage = 'EulerLauncher'    # 应用包名，用于在本地电脑生成唯一文件夹
+    appUpdateUrl = 'https://gitee.com/openeuler/eulerlauncher/releases'    # 获取程序更新信息
+    appISSID = '880D983A-4E07-A797-0B68-F828BD0373C4'    # Inno Setup 打包唯生成后请勿修改！！！一编号。在执行 pnpm run init 之前，请设置为空，程序会自动生成唯一编号，
 
     ##
     # 系统配置信息（不需要修改，可以自动获取）
