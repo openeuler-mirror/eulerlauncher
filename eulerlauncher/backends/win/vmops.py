@@ -1,7 +1,8 @@
 import json
+import psutil
+import random
 import subprocess
 import time
-import psutil
 
 
 from os_win import constants as os_win_const
@@ -30,6 +31,37 @@ class VMUtils_omni(vmutils10.VMUtils10):
     def get_vm_nic_uids(self, vm_name):
         nics = self._get_vm_nics(vm_name)
         return nics
+
+class Flavor(object):
+    def __init__(self, flavor_name, cpucores_num, ram_capacity, disk_capacity, flavor_id=None):
+        self.flavor_id = flavor_id or self.generate_unique_id()  # 初始化虚拟机规格的唯一ID
+        self.flavor_name = flavor_name  # 虚拟机规格名称
+        self.cpucores_num = str(cpucores_num)  # CPU核心数（转换为字符串类型）
+        self.ram_capacity = ram_capacity  # 内存大小（MB）
+        self.disk_capacity = disk_capacity  # 磁盘大小（GB）
+
+    def generate_unique_id(self):
+        # 生成唯一ID的方法，使用时间戳和随机数结合
+        timestamp = int(time.time() * 1000)  # 当前时间的毫秒级别时间戳
+        random_part = random.randint(0, 1000)  # 0到1000之间的随机数
+        return f'{timestamp}-{random_part}'
+
+    def to_dict(self):
+        # 将Flavor对象转换为字典
+        return {
+            'flavor_id': self.flavor_id,
+            'flavor_name': self.flavor_name,
+            'cpucores_num': self.cpucores_num,
+            'ram_capacity': self.ram_capacity,
+            'disk_capacity': self.disk_capacity
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # 从字典创建Flavor对象的类方法
+        return cls(data['flavor_name'], int(data['cpucores_num']), data['ram_capacity'], data['disk_capacity'],
+                   data.get('flavor_id'))
+
 
 class VMOps(object):
     _ROOT_DISK_CTRL_ADDR = 0
@@ -107,7 +139,61 @@ class VMOps(object):
         info = self._vmutils.get_vm_summary_info(instance_name)
 
         return info
-    
+
+    def create_flavor(self, flavor_name, cpucores_num, ram_capacity, disk_capacity):
+        # 创建虚拟机规格
+        flavor = Flavor(flavor_name, cpucores_num, ram_capacity, disk_capacity)
+        self.save_flavor(flavor)
+
+    def delete_flavor(self, flavor_id):
+        # 删除虚拟机规格
+        flavors = self.load_flavors()
+        flavor_to_delete = None
+
+        # 查找要删除的虚拟机规格
+        for flavor in flavors:
+            if flavor.flavor_id == flavor_id:
+                flavor_to_delete = flavor
+                break
+
+        if flavor_to_delete:
+            flavors.remove(flavor_to_delete)
+            self.save_flavors(flavors)
+            print(f"Flavor with flavor_id {flavor_id} has been deleted.")
+        else:
+            print(f"Flavor with flavor_id {flavor_id} not found.")
+
+    def save_flavor(self, flavor):
+        # 将Flavor对象保存到配置文件
+        flavors = self.load_flavors()
+        flavors.append(flavor.to_dict())
+        with open('flavors.json', 'w') as f:
+            json.dump(flavors, f)
+
+    def load_flavors(self):
+        try:
+            # 从配置文件加载Flavor对象列表
+            with open('flavors.json', 'r') as f:
+                data = json.load(f)
+                return [Flavor.from_dict(item) for item in data]
+        except FileNotFoundError:
+            return []  # 如果配置文件不存在，返回空列表
+
+    def print_all_flavors(self):
+        flavors = self.load_flavors()
+        if not flavors:
+            print("No virtual machine flavors found.")
+            return
+
+        print("All Virtual Machine Flavors:")
+        for flavor in flavors:
+            print(f"Flavor ID: {flavor.flavor_id}")
+            print(f"Flavor Name: {flavor.flavor_name}")
+            print(f"CPU Cores: {flavor.cpucores_num}")
+            print(f"RAM Capacity: {flavor.ram_capacity} MB")
+            print(f"Disk Capacity: {flavor.disk_capacity} GB")
+            print("-------------")
+
     def create_vm(self, vm_name, vnuma_enabled, vm_gen, instance_path,
                   meta_data):
         self._vmutils.create_vm(vm_name,
@@ -116,7 +202,7 @@ class VMOps(object):
                                 instance_path,
                                 [json.dumps(meta_data)])
 
-    def build_and_run_vm(self, vm_name, uuid, image_name, vnuma_enabled, vm_gen, instance_path, root_disk_path):
+    def build_and_run_vm(self, vm_name, uuid, image_name, vnuma_enabled, vm_gen, instance_path, root_disk_path, flavor):
         meta_data = {
             'uuid': uuid,
             'image': image_name,
@@ -127,10 +213,16 @@ class VMOps(object):
         self.create_vm(vm_name, vnuma_enabled, vm_gen, instance_path, meta_data)
         # Create a scsi controller for this instance
         self._vmutils.create_scsi_controller(vm_name)
+        # 创建规定大小的磁盘文件
+        # 创建一个VHDUtils实例
+        vhd_utils = VHDUtils()
+        # 调用create_vhd方法
+        vhd_utils.create_vhd(root_disk_path, constants.VHD_TYPE_FIXED,
+                             max_internal_size=flavor.disk_capacity * 1024 * 1024 * 1024)
         # Attach the root disk to the driver
         self.attach_disk(vm_name, root_disk_path, constants.DISK)
-        # Set default flavor
-        self._vmutils.update_vm(vm_name, 4096, 0, '2', 0, False, 0)
+        # 设置虚拟机的 CPU、内存
+        self._vmutils.update_vm(vm_name, flavor.ram_capacity, 0, flavor.cpucores_num, 0, False, 0)
         # Start the instance
         self.power_up(vm_name)
         nic_name = vm_name + '_eth0'
