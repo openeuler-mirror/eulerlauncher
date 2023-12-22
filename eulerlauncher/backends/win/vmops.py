@@ -256,11 +256,30 @@ class VMOps(object):
 
     def attach_disk(self, instance_name, path, drive_type):
         self._vmutils.attach_scsi_drive(instance_name, path, drive_type)
-    
+
+    def detach_disk(self, vm_name, disk_path=None, is_physical=True, serial=None):
+        # 卸载虚拟机磁盘，如果不传入disk_path的话则默认会分离所有磁盘资源
+        self._vmutils.detach_vm_disk(vm_name, disk_path, is_physical, serial)
+
     def power_up(self, instance_name):
         req_state = os_win_const.HYPERV_VM_STATE_ENABLED
         self._vmutils.set_vm_state(instance_name, req_state)
     
+    def start_vm(self, vm_name):
+        # 启动虚拟机并连接网络
+        self.power_up(vm_name)
+
+        # 添加并配置网络适配器
+        nic_name = vm_name + '_eth0'
+        self.add_nic(vm_name, nic_name)
+
+        # 连接虚拟机的网络适配器到指定的交换机
+        self.connect_vnic_to_switch(SWITCH_NAME, nic_name)
+
+    def stop_vm(self, vm_name):
+        # 停止虚拟机
+        self._vmutils.soft_shutdown_vm(vm_name)
+
     def add_nic(self, instance_name, nic_name):
         self._vmutils.create_nic(instance_name, nic_name)
     
