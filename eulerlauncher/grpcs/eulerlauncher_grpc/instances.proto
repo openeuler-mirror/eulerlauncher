@@ -1,5 +1,8 @@
 syntax = "proto3";
-package eulerlauncher;
+
+import "flavors.proto";
+
+package instances;
 
 option cc_generic_services = true;
 
@@ -12,13 +15,8 @@ service InstanceGrpcService {
     rpc stop_instsance (StopInstanceRequest) returns (InstanceResponse) {}
     rpc AttachDisk(AttachDiskRequest) returns (InstanceResponse);
     rpc DetachDisk(DetachDiskRequest) returns (InstanceResponse);
-    rpc CreateFlavor(CreateFlavorRequest) returns (InstanceResponse);
-    rpc DeleteFlavor(DeleteFlavorRequest) returns (InstanceResponse);
     rpc attach_disk (AttachDiskRequest) returns (InstanceResponse) {}
     rpc dettach_disk (DetachDiskRequest) returns (InstanceResponse) {}
-    rpc list_flavor (ListFlavorsRequest) returns (ListFlavorsResponse) {}
-    rpc create_flavor (CreateFlavorRequest) returns (InstanceResponse) {}
-    rpc delete_flavor (CreateFlavorRequest) returns (InstanceResponse) {}
     rpc take_snapshot (TakeSnapshotRequest) returns (TakeSnapshotResponse) {}
     rpc export_development_image (ExportDevelopmentImageRequest) returns (ExportDevelopmentImageResponse) {}
 }
@@ -29,15 +27,7 @@ message Instance {
     string image = 2;
     string vm_state = 3;
     string ip_address = 4;
-    optional Flavor flavor = 5;
-}
-
-message Flavor {
-    string flavor_id = 1;
-    string flavor_name = 2;
-    string cpucores_num = 3;
-    string ram_capacity = 4;
-    string disk_capacity = 5;
+    optional flavors.Flavor flavor = 5;
 }
 
 message ListInstancesRequest {
@@ -54,7 +44,7 @@ message CreateInstanceRequest {
     string arch = 3;
     string instance_path = 4;
     string root_disk_path = 5;
-    Flavor flavor = 6;
+    flavors.Flavor flavor = 6;
 }
 
 message CreateInstanceResponse {
@@ -110,25 +100,6 @@ message AttachDiskRequest {
 message DetachDiskRequest {
     string name = 1;
     string disk_path = 2;
-}
-
-message ListFlavorsRequest {
-}
-
-
-message ListFlavorsResponse {
-    repeated Flavor flavors = 1;
-}
-
-message CreateFlavorRequest {
-    string flavor_name = 1;
-    string cpucores_num = 2;
-    string ram_capacity = 3;
-    string disk_capacity = 4;
-}
-
-message DeleteFlavorRequest {
-    string flavor_id = 1;
 }
 
 message InstanceResponse {
