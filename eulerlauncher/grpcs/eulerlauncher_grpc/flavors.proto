@@ -37,6 +37,12 @@ message DeleteFlavorRequest {
     string flavor_id = 1;
 }
 
+message CreateFlavorResponse {
+    uint32 ret = 1;
+    string msg = 2;
+    optional Flavor flavor = 3;
+}
+
 message FlavorResponse {
     string message = 1;
 }

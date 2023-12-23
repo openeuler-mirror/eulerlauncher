@@ -89,6 +89,69 @@ def delete_image(name):
         print(ret['msg'])
 
 
+# List all usable flavors
+@click.command()
+def flavors():
+
+    try:
+        ret = launcher_client.list_flavors()
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        tb = pt.PrettyTable()
+
+        tb.field_names = ["ID", "Name", "CPU", "RAM", "DISK"]
+
+        for flavor in ret['flavors']:
+            tb.add_row(
+                [flavor['flavor_id'], flavor['flavor_name'],
+                 flavor['cpucores_num'], flavor['ram_capacity'], flavor['disk_capacity']])
+
+        print(tb)
+
+
+@click.command()
+@click.argument('flavor_name')
+@click.option('--cpu', help='Flavor CPU number')
+@click.option('--ram', help='Flavor RAM size')
+@click.option('--disk', help='Flavor Disk Size')
+def create_flavor(name, cpu, ram, disk):
+    
+    try:
+        ret = launcher_client.create_flavor(name, cpu, ram, disk)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        if ret['ret'] == 1:
+            tb = pt.PrettyTable()
+            tb.field_names = ["ID", "Name", "CPU", "RAM", "DISK"]
+
+            tb.add_row(
+                [ret['flavor']['flavor_id'],
+                 ret['flavor']['flavor_name'],
+                 ret['flavor']['cpucores_num'],
+                 ret['flavor']['ram_capacity'],
+                 ret['flavor']['disk_capacity'],
+                 ]
+            )
+            print(tb)
+    
+        else:
+            print(ret['msg'])
+
+
+@click.command()
+@click.argument('name')
+def delete_flavor(name):
+
+    try:
+        ret = launcher_client.delete_flavor(name)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+
 @click.command()
 @click.argument('name')
 def delete_instance(name):
@@ -174,6 +237,9 @@ if __name__ == '__main__':
     cli.add_command(load_image)
     cli.add_command(launch)
     cli.add_command(delete_image)
+    cli.add_command(flavors)
+    cli.add_command(create_flavor)
+    cli.add_command(delete_flavor)
     cli.add_command(delete_instance)
     cli.add_command(take_snapshot)
     cli.add_command(export_development_image)

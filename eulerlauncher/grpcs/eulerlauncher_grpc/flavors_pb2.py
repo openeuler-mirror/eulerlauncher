@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rflavors.proto\x12\x07\x66lavors\"s\n\x06\x46lavor\x12\x11\n\tflavor_id\x18\x01 \x01(\t\x12\x13\n\x0b\x66lavor_name\x18\x02 \x01(\t\x12\x14\n\x0c\x63pucores_num\x18\x03 \x01(\t\x12\x14\n\x0cram_capacity\x18\x04 \x01(\t\x12\x15\n\rdisk_capacity\x18\x05 \x01(\t\"\x14\n\x12ListFlavorsRequest\"7\n\x13ListFlavorsResponse\x12 \n\x07\x66lavors\x18\x01 \x03(\x0b\x32\x0f.flavors.Flavor\"m\n\x13\x43reateFlavorRequest\x12\x13\n\x0b\x66lavor_name\x18\x01 \x01(\t\x12\x14\n\x0c\x63pucores_num\x18\x02 \x01(\t\x12\x14\n\x0cram_capacity\x18\x03 \x01(\t\x12\x15\n\rdisk_capacity\x18\x04 \x01(\t\"(\n\x13\x44\x65leteFlavorRequest\x12\x11\n\tflavor_id\x18\x01 \x01(\t\"!\n\x0e\x46lavorResponse\x12\x0f\n\x07message\x18\x01 \x01(\t2\xf3\x01\n\x11\x46lavorGrpcService\x12J\n\x0blist_flavor\x12\x1b.flavors.ListFlavorsRequest\x1a\x1c.flavors.ListFlavorsResponse\"\x00\x12H\n\rcreate_flavor\x12\x1c.flavors.CreateFlavorRequest\x1a\x17.flavors.FlavorResponse\"\x00\x12H\n\rdelete_flavor\x12\x1c.flavors.DeleteFlavorRequest\x1a\x17.flavors.FlavorResponse\"\x00\x42\x03\x80\x01\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rflavors.proto\x12\x07\x66lavors\"s\n\x06\x46lavor\x12\x11\n\tflavor_id\x18\x01 \x01(\t\x12\x13\n\x0b\x66lavor_name\x18\x02 \x01(\t\x12\x14\n\x0c\x63pucores_num\x18\x03 \x01(\t\x12\x14\n\x0cram_capacity\x18\x04 \x01(\t\x12\x15\n\rdisk_capacity\x18\x05 \x01(\t\"\x14\n\x12ListFlavorsRequest\"7\n\x13ListFlavorsResponse\x12 \n\x07\x66lavors\x18\x01 \x03(\x0b\x32\x0f.flavors.Flavor\"m\n\x13\x43reateFlavorRequest\x12\x13\n\x0b\x66lavor_name\x18\x01 \x01(\t\x12\x14\n\x0c\x63pucores_num\x18\x02 \x01(\t\x12\x14\n\x0cram_capacity\x18\x03 \x01(\t\x12\x15\n\rdisk_capacity\x18\x04 \x01(\t\"(\n\x13\x44\x65leteFlavorRequest\x12\x11\n\tflavor_id\x18\x01 \x01(\t\"a\n\x14\x43reateFlavorResponse\x12\x0b\n\x03ret\x18\x01 \x01(\r\x12\x0b\n\x03msg\x18\x02 \x01(\t\x12$\n\x06\x66lavor\x18\x03 \x01(\x0b\x32\x0f.flavors.FlavorH\x00\x88\x01\x01\x42\t\n\x07_flavor\"!\n\x0e\x46lavorResponse\x12\x0f\n\x07message\x18\x01 \x01(\t2\xf3\x01\n\x11\x46lavorGrpcService\x12J\n\x0blist_flavor\x12\x1b.flavors.ListFlavorsRequest\x1a\x1c.flavors.ListFlavorsResponse\"\x00\x12H\n\rcreate_flavor\x12\x1c.flavors.CreateFlavorRequest\x1a\x17.flavors.FlavorResponse\"\x00\x12H\n\rdelete_flavor\x12\x1c.flavors.DeleteFlavorRequest\x1a\x17.flavors.FlavorResponse\"\x00\x42\x03\x80\x01\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,8 +32,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['_CREATEFLAVORREQUEST']._serialized_end=331
   _globals['_DELETEFLAVORREQUEST']._serialized_start=333
   _globals['_DELETEFLAVORREQUEST']._serialized_end=373
-  _globals['_FLAVORRESPONSE']._serialized_start=375
-  _globals['_FLAVORRESPONSE']._serialized_end=408
-  _globals['_FLAVORGRPCSERVICE']._serialized_start=411
-  _globals['_FLAVORGRPCSERVICE']._serialized_end=654
+  _globals['_CREATEFLAVORRESPONSE']._serialized_start=375
+  _globals['_CREATEFLAVORRESPONSE']._serialized_end=472
+  _globals['_FLAVORRESPONSE']._serialized_start=474
+  _globals['_FLAVORRESPONSE']._serialized_end=507
+  _globals['_FLAVORGRPCSERVICE']._serialized_start=510
+  _globals['_FLAVORGRPCSERVICE']._serialized_end=753
 # @@protoc_insertion_point(module_scope)

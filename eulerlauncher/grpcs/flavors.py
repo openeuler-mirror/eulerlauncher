@@ -7,13 +7,14 @@ class Flavor(object):
 
     def list(self):
         """Get list of flavors"""
-        request = flavors_pb2.ListFlavorsRequest
+        request = flavors_pb2.ListFlavorsRequest()
         response = self.client.list_flavors(request)
         return response
 
-    def create(self):
+    def create(self, name, cpu, ram, disk):
         """Create a new flavor"""
-        request = flavors_pb2.CreateFlavorRequest
+        request = flavors_pb2.CreateFlavorRequest(
+            flavor_name=name, cpucores_num=cpu, ram_capacity=ram, disk_capacity=disk)
         response = self.clent.create_flavor(request)
         return response
 
