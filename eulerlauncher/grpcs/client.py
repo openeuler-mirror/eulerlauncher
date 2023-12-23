@@ -3,9 +3,10 @@ import os
 
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2_grpc
 from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2_grpc
-from eulerlauncher.grpcs import images, instances
+from eulerlauncher.grpcs.eulerlauncher_grpc import flavors_pb2_grpc
+from eulerlauncher.grpcs import images, instances, flavors
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as omnivirt_utils
+from eulerlauncher.utils import utils as eulerlauncher_utils
 
 
 class Client(object):
@@ -16,11 +17,13 @@ class Client(object):
 
         images_client = images_pb2_grpc.ImageGrpcServiceStub(channel)
         instances_client = instances_pb2_grpc.InstanceGrpcServiceStub(channel)
+        flavors_client = flavors_pb2_grpc.FlavorGrpcServiceStub(channel)
 
         self._images = images.Image(images_client)
         self._instances = instances.Instance(instances_client)
+        self._flavors = flavors.Flavor(flavors_client)
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def list_images(self, filters=None):
         """ [IMAGE] List images
 
@@ -30,14 +33,14 @@ class Client(object):
 
         return self._images.list()
     
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def download_image(self, name):
         """ Download image
         """
 
         return self._images.download(name)
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def load_image(self, name, path):
         """ Load local image file
         """
@@ -64,14 +67,38 @@ class Client(object):
         
         return self._images.load(name, path)
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def delete_image(self, name):
         """ Delete the requested image
         """
 
         return self._images.delete(name)
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
+    def list_flavors(self, filters=None):
+        """ [IMAGE] List flavors
+
+        :param filters(list): None
+        :return: dict -- list of flavors' info
+        """
+
+        return self._flavors.list()
+
+    @eulerlauncher_utils.response2dict
+    def create_flavor(self, name):
+        """ Create a new flavor
+        """
+
+        return self._flavors.create(name)
+
+    @eulerlauncher_utils.response2dict
+    def delete_flavor(self, name):
+        """ Delete the requested image
+        """
+
+        return self._flavors.delete(name)
+
+    @eulerlauncher_utils.response2dict
     def list_instances(self):
         """ List instances
         :return: dict -- list of instances' info
@@ -79,7 +106,7 @@ class Client(object):
 
         return self._instances.list()
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def create_instance(self, name, image, arch):
         """ Create instance
         :return: dict -- dict of instance's info
@@ -88,21 +115,21 @@ class Client(object):
 
         return self._instances.create(name, image, arch)
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def delete_instance(self, name):
         """ Delete the requested instance
         """
 
         return self._instances.delete(name)
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def take_snapshot(self, vm_name, snapshot_name, export_path):
         """ Take snapshot
         """
 
         return self._instances.take_snapshot(vm_name, snapshot_name, export_path)
 
-    @omnivirt_utils.response2dict
+    @eulerlauncher_utils.response2dict
     def export_development_image(self, vm_name, image_name, export_path, pwd):
         """ Export Python/Go/Java development image
         """
