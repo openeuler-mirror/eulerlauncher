@@ -1,0 +1,42 @@
+syntax = "proto3";
+package flavors;
+
+option cc_generic_services = true;
+
+service FlavorGrpcService {
+    rpc list_flavor (ListFlavorsRequest) returns (ListFlavorsResponse) {}
+    rpc create_flavor (CreateFlavorRequest) returns (FlavorResponse) {}
+    rpc delete_flavor (DeleteFlavorRequest) returns (FlavorResponse) {}
+}
+
+message Flavor {
+    string flavor_id = 1;
+    string flavor_name = 2;
+    string cpucores_num = 3;
+    string ram_capacity = 4;
+    string disk_capacity = 5;
+}
+
+
+message ListFlavorsRequest {
+}
+
+
+message ListFlavorsResponse {
+    repeated Flavor flavors = 1;
+}
+
+message CreateFlavorRequest {
+    string flavor_name = 1;
+    string cpucores_num = 2;
+    string ram_capacity = 3;
+    string disk_capacity = 4;
+}
+
+message DeleteFlavorRequest {
+    string flavor_id = 1;
+}
+
+message FlavorResponse {
+    string message = 1;
+}

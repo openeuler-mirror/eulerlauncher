@@ -15,82 +15,57 @@ class InstanceGrpcServiceStub(object):
             channel: A grpc.Channel.
         """
         self.list_instances = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/list_instances',
+                '/instances.InstanceGrpcService/list_instances',
                 request_serializer=instances__pb2.ListInstancesRequest.SerializeToString,
                 response_deserializer=instances__pb2.ListInstancesResponse.FromString,
                 )
         self.create_instance = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/create_instance',
+                '/instances.InstanceGrpcService/create_instance',
                 request_serializer=instances__pb2.CreateInstanceRequest.SerializeToString,
                 response_deserializer=instances__pb2.CreateInstanceResponse.FromString,
                 )
         self.delete_instance = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/delete_instance',
+                '/instances.InstanceGrpcService/delete_instance',
                 request_serializer=instances__pb2.DeleteInstanceRequest.SerializeToString,
                 response_deserializer=instances__pb2.DeleteInstanceResponse.FromString,
                 )
         self.start_instance = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/start_instance',
+                '/instances.InstanceGrpcService/start_instance',
                 request_serializer=instances__pb2.StartInstanceRequest.SerializeToString,
                 response_deserializer=instances__pb2.InstanceResponse.FromString,
                 )
         self.stop_instsance = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/stop_instsance',
+                '/instances.InstanceGrpcService/stop_instsance',
                 request_serializer=instances__pb2.StopInstanceRequest.SerializeToString,
                 response_deserializer=instances__pb2.InstanceResponse.FromString,
                 )
         self.AttachDisk = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/AttachDisk',
+                '/instances.InstanceGrpcService/AttachDisk',
                 request_serializer=instances__pb2.AttachDiskRequest.SerializeToString,
                 response_deserializer=instances__pb2.InstanceResponse.FromString,
                 )
         self.DetachDisk = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/DetachDisk',
+                '/instances.InstanceGrpcService/DetachDisk',
                 request_serializer=instances__pb2.DetachDiskRequest.SerializeToString,
                 response_deserializer=instances__pb2.InstanceResponse.FromString,
                 )
-        self.CreateFlavor = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/CreateFlavor',
-                request_serializer=instances__pb2.CreateFlavorRequest.SerializeToString,
-                response_deserializer=instances__pb2.InstanceResponse.FromString,
-                )
-        self.DeleteFlavor = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/DeleteFlavor',
-                request_serializer=instances__pb2.DeleteFlavorRequest.SerializeToString,
-                response_deserializer=instances__pb2.InstanceResponse.FromString,
-                )
         self.attach_disk = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/attach_disk',
+                '/instances.InstanceGrpcService/attach_disk',
                 request_serializer=instances__pb2.AttachDiskRequest.SerializeToString,
                 response_deserializer=instances__pb2.InstanceResponse.FromString,
                 )
         self.dettach_disk = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/dettach_disk',
+                '/instances.InstanceGrpcService/dettach_disk',
                 request_serializer=instances__pb2.DetachDiskRequest.SerializeToString,
                 response_deserializer=instances__pb2.InstanceResponse.FromString,
                 )
-        self.list_flavor = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/list_flavor',
-                request_serializer=instances__pb2.ListFlavorsRequest.SerializeToString,
-                response_deserializer=instances__pb2.ListFlavorsResponse.FromString,
-                )
-        self.create_flavor = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/create_flavor',
-                request_serializer=instances__pb2.CreateFlavorRequest.SerializeToString,
-                response_deserializer=instances__pb2.InstanceResponse.FromString,
-                )
-        self.delete_flavor = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/delete_flavor',
-                request_serializer=instances__pb2.CreateFlavorRequest.SerializeToString,
-                response_deserializer=instances__pb2.InstanceResponse.FromString,
-                )
         self.take_snapshot = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/take_snapshot',
+                '/instances.InstanceGrpcService/take_snapshot',
                 request_serializer=instances__pb2.TakeSnapshotRequest.SerializeToString,
                 response_deserializer=instances__pb2.TakeSnapshotResponse.FromString,
                 )
         self.export_development_image = channel.unary_unary(
-                '/eulerlauncher.InstanceGrpcService/export_development_image',
+                '/instances.InstanceGrpcService/export_development_image',
                 request_serializer=instances__pb2.ExportDevelopmentImageRequest.SerializeToString,
                 response_deserializer=instances__pb2.ExportDevelopmentImageResponse.FromString,
                 )
@@ -141,18 +116,6 @@ class InstanceGrpcServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CreateFlavor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def DeleteFlavor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def attach_disk(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -160,24 +123,6 @@ class InstanceGrpcServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def dettach_disk(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def list_flavor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def create_flavor(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def delete_flavor(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -233,16 +178,6 @@ def add_InstanceGrpcServiceServicer_to_server(servicer, server):
                     request_deserializer=instances__pb2.DetachDiskRequest.FromString,
                     response_serializer=instances__pb2.InstanceResponse.SerializeToString,
             ),
-            'CreateFlavor': grpc.unary_unary_rpc_method_handler(
-                    servicer.CreateFlavor,
-                    request_deserializer=instances__pb2.CreateFlavorRequest.FromString,
-                    response_serializer=instances__pb2.InstanceResponse.SerializeToString,
-            ),
-            'DeleteFlavor': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteFlavor,
-                    request_deserializer=instances__pb2.DeleteFlavorRequest.FromString,
-                    response_serializer=instances__pb2.InstanceResponse.SerializeToString,
-            ),
             'attach_disk': grpc.unary_unary_rpc_method_handler(
                     servicer.attach_disk,
                     request_deserializer=instances__pb2.AttachDiskRequest.FromString,
@@ -251,21 +186,6 @@ def add_InstanceGrpcServiceServicer_to_server(servicer, server):
             'dettach_disk': grpc.unary_unary_rpc_method_handler(
                     servicer.dettach_disk,
                     request_deserializer=instances__pb2.DetachDiskRequest.FromString,
-                    response_serializer=instances__pb2.InstanceResponse.SerializeToString,
-            ),
-            'list_flavor': grpc.unary_unary_rpc_method_handler(
-                    servicer.list_flavor,
-                    request_deserializer=instances__pb2.ListFlavorsRequest.FromString,
-                    response_serializer=instances__pb2.ListFlavorsResponse.SerializeToString,
-            ),
-            'create_flavor': grpc.unary_unary_rpc_method_handler(
-                    servicer.create_flavor,
-                    request_deserializer=instances__pb2.CreateFlavorRequest.FromString,
-                    response_serializer=instances__pb2.InstanceResponse.SerializeToString,
-            ),
-            'delete_flavor': grpc.unary_unary_rpc_method_handler(
-                    servicer.delete_flavor,
-                    request_deserializer=instances__pb2.CreateFlavorRequest.FromString,
                     response_serializer=instances__pb2.InstanceResponse.SerializeToString,
             ),
             'take_snapshot': grpc.unary_unary_rpc_method_handler(
@@ -280,7 +200,7 @@ def add_InstanceGrpcServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'eulerlauncher.InstanceGrpcService', rpc_method_handlers)
+            'instances.InstanceGrpcService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -299,7 +219,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/list_instances',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/list_instances',
             instances__pb2.ListInstancesRequest.SerializeToString,
             instances__pb2.ListInstancesResponse.FromString,
             options, channel_credentials,
@@ -316,7 +236,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/create_instance',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/create_instance',
             instances__pb2.CreateInstanceRequest.SerializeToString,
             instances__pb2.CreateInstanceResponse.FromString,
             options, channel_credentials,
@@ -333,7 +253,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/delete_instance',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/delete_instance',
             instances__pb2.DeleteInstanceRequest.SerializeToString,
             instances__pb2.DeleteInstanceResponse.FromString,
             options, channel_credentials,
@@ -350,7 +270,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/start_instance',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/start_instance',
             instances__pb2.StartInstanceRequest.SerializeToString,
             instances__pb2.InstanceResponse.FromString,
             options, channel_credentials,
@@ -367,7 +287,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/stop_instsance',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/stop_instsance',
             instances__pb2.StopInstanceRequest.SerializeToString,
             instances__pb2.InstanceResponse.FromString,
             options, channel_credentials,
@@ -384,7 +304,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/AttachDisk',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/AttachDisk',
             instances__pb2.AttachDiskRequest.SerializeToString,
             instances__pb2.InstanceResponse.FromString,
             options, channel_credentials,
@@ -401,42 +321,8 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/DetachDisk',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/DetachDisk',
             instances__pb2.DetachDiskRequest.SerializeToString,
-            instances__pb2.InstanceResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def CreateFlavor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/CreateFlavor',
-            instances__pb2.CreateFlavorRequest.SerializeToString,
-            instances__pb2.InstanceResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def DeleteFlavor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/DeleteFlavor',
-            instances__pb2.DeleteFlavorRequest.SerializeToString,
             instances__pb2.InstanceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -452,7 +338,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/attach_disk',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/attach_disk',
             instances__pb2.AttachDiskRequest.SerializeToString,
             instances__pb2.InstanceResponse.FromString,
             options, channel_credentials,
@@ -469,59 +355,8 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/dettach_disk',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/dettach_disk',
             instances__pb2.DetachDiskRequest.SerializeToString,
-            instances__pb2.InstanceResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def list_flavor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/list_flavor',
-            instances__pb2.ListFlavorsRequest.SerializeToString,
-            instances__pb2.ListFlavorsResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def create_flavor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/create_flavor',
-            instances__pb2.CreateFlavorRequest.SerializeToString,
-            instances__pb2.InstanceResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def delete_flavor(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/delete_flavor',
-            instances__pb2.CreateFlavorRequest.SerializeToString,
             instances__pb2.InstanceResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -537,7 +372,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/take_snapshot',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/take_snapshot',
             instances__pb2.TakeSnapshotRequest.SerializeToString,
             instances__pb2.TakeSnapshotResponse.FromString,
             options, channel_credentials,
@@ -554,7 +389,7 @@ class InstanceGrpcService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/eulerlauncher.InstanceGrpcService/export_development_image',
+        return grpc.experimental.unary_unary(request, target, '/instances.InstanceGrpcService/export_development_image',
             instances__pb2.ExportDevelopmentImageRequest.SerializeToString,
             instances__pb2.ExportDevelopmentImageResponse.FromString,
             options, channel_credentials,
