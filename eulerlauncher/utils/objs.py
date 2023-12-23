@@ -1,5 +1,7 @@
-import os
 import configparser
+import os
+import random
+import time
 
 from eulerlauncher.utils import exceptions
 from eulerlauncher.utils import constants
@@ -43,6 +45,37 @@ class Image(object):
         self.location = img_dict['location']
         self.status = img_dict['status']
         self.path = img_dict['path']
+
+
+class Flavor(object):
+    def __init__(self, flavor_name, cpucores_num, ram_capacity, disk_capacity, flavor_id=None):
+        self.flavor_id = flavor_id or self.generate_unique_id()  # 初始化虚拟机规格的唯一ID
+        self.flavor_name = flavor_name  # 虚拟机规格名称
+        self.cpucores_num = str(cpucores_num)  # CPU核心数（转换为字符串类型）
+        self.ram_capacity = ram_capacity  # 内存大小（MB）
+        self.disk_capacity = disk_capacity  # 磁盘大小（GB）
+
+    def generate_unique_id(self):
+        # 生成唯一ID的方法，使用时间戳和随机数结合
+        timestamp = int(time.time() * 1000)  # 当前时间的毫秒级别时间戳
+        random_part = random.randint(0, 1000)  # 0到1000之间的随机数
+        return f'{timestamp}-{random_part}'
+
+    def to_dict(self):
+        # 将Flavor对象转换为字典
+        return {
+            'flavor_id': self.flavor_id,
+            'flavor_name': self.flavor_name,
+            'cpucores_num': self.cpucores_num,
+            'ram_capacity': self.ram_capacity,
+            'disk_capacity': self.disk_capacity
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # 从字典创建Flavor对象的类方法
+        return cls(data['flavor_name'], int(data['cpucores_num']), data['ram_capacity'], data['disk_capacity'],
+                   data.get('flavor_id'))
 
 
 class Conf(object):

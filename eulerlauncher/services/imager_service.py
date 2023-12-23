@@ -4,8 +4,8 @@ import os
 from eulerlauncher.backends.mac import image_handler as mac_image_handler
 from eulerlauncher.backends.win import image_handler as win_image_handler
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
-from eulerlauncher.utils import constants as omni_constants
-from eulerlauncher.utils import utils as omni_utils
+from eulerlauncher.utils import constants as launcher_constants
+from eulerlauncher.utils import utils as launcher_utils
 
 
 LOG = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
 
     def list_images(self, request, context):
         LOG.debug(f"Get request to list images ...")
-        all_images = omni_utils.load_json_data(self.img_record_file)
+        all_images = launcher_utils.load_json_data(self.img_record_file)
 
         ret = []
         for _, images in all_images.items():
@@ -41,9 +41,9 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
                 image.name = img['name']
                 image.location = img['location']
                 image.status = img['status']
-                if image.status == omni_constants.IMAGE_STATUS_DOWNLOADING:
+                if image.status == launcher_constants.IMAGE_STATUS_DOWNLOADING:
                     image.status = self.backend.download_progress_bar(image.name)
-                elif image.status == omni_constants.IMAGE_STATUS_LOADING:
+                elif image.status == launcher_constants.IMAGE_STATUS_LOADING:
                     image.status = self.backend.load_progress_bar(image.name)
                 ret.append(image)
         LOG.debug(f"Responded: {ret}")
@@ -51,14 +51,14 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
     
     def download_image(self, request, context):
         LOG.debug(f"Get request to download image: {request.name} ...")
-        all_images = omni_utils.load_json_data(self.img_record_file)
+        all_images = launcher_utils.load_json_data(self.img_record_file)
         
         if request.name not in all_images['remote'].keys():
             LOG.debug(f'Image: {request.name} not valid for download')
             msg = f'Error: Image {request.name} is not valid for download, please check image name from REMOTE IMAGE LIST using "images" command ...'
             return images_pb2.GeneralImageResponse(ret=1, msg=msg)
         
-        @omni_utils.asyncwrapper
+        @launcher_utils.asyncwrapper
         def do_download(images, name):
             self.backend.download_and_transform(images, name)
         
@@ -71,16 +71,16 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
 
         LOG.debug(f"Get request to load image: {request.name} from path: {request.path} ...")
 
-        supported, fmt = omni_utils.check_file_tail(
-            request.path, omni_constants.IMAGE_LOAD_SUPPORTED_TYPES + omni_constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED)
+        supported, fmt = launcher_utils.check_file_tail(
+            request.path, launcher_constants.IMAGE_LOAD_SUPPORTED_TYPES + launcher_constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED)
         
         if not supported:
-            supported_fmt = ', '.join(omni_constants.IMAGE_LOAD_SUPPORTED_TYPES + omni_constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED)
+            supported_fmt = ', '.join(launcher_constants.IMAGE_LOAD_SUPPORTED_TYPES + launcher_constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED)
             msg = f'Unsupported image format, the current supported formats are: {supported_fmt}.'
 
             return images_pb2.GeneralImageResponse(ret=1, msg=msg)
 
-        all_images = omni_utils.load_json_data(self.img_record_file)
+        all_images = launcher_utils.load_json_data(self.img_record_file)
 
         msg = f'Loading: {request.name}, this might take a while, please check image status with "images" command.'
         update = False
@@ -91,7 +91,7 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
             msg = f'Replacing: {request.name}, with new image file: {request.path}, this might take a while, please check image status with "images" command.'
             update = True
 
-        @omni_utils.asyncwrapper
+        @launcher_utils.asyncwrapper
         def do_load(images, name, path, fmt, update):
             self.backend.load_and_transform(images, name, path, fmt, update)
         
@@ -101,7 +101,7 @@ class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
 
     def delete_image(self, request, context):
         LOG.debug(f"Get request to delete image: {request.name}  ...")
-        images = omni_utils.load_json_data(self.img_record_file)
+        images = launcher_utils.load_json_data(self.img_record_file)
         ret = self.backend.delete_image(images, request.name)
         if ret == 0:
             msg = f'Image: {request.name} has been successfully deleted.'
