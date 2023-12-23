@@ -76,7 +76,7 @@ class Client(object):
 
     @eulerlauncher_utils.response2dict
     def list_flavors(self, filters=None):
-        """ [IMAGE] List flavors
+        """ List flavors
 
         :param filters(list): None
         :return: dict -- list of flavors' info
@@ -85,11 +85,11 @@ class Client(object):
         return self._flavors.list()
 
     @eulerlauncher_utils.response2dict
-    def create_flavor(self, name):
+    def create_flavor(self, name, cpu, ram, disk):
         """ Create a new flavor
         """
 
-        return self._flavors.create(name)
+        return self._flavors.create(name, cpu, ram, disk)
 
     @eulerlauncher_utils.response2dict
     def delete_flavor(self, name):
