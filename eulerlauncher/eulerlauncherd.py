@@ -14,7 +14,8 @@ import time
 
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2_grpc
 from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2_grpc
-from eulerlauncher.services import imager_service, instance_service
+from eulerlauncher.grpcs.eulerlauncher_grpc import flavors_pb2_grpc
+from eulerlauncher.services import imager_service, instance_service, flavor_service
 from eulerlauncher.utils import constants
 from eulerlauncher.utils import objs
 from eulerlauncher.utils import utils
@@ -53,9 +54,11 @@ def config_logging(config):
 def init(arch, config, LOG):
     work_dir = config.conf.get('default', 'work_dir')
     image_dir = os.path.join(work_dir, 'images')
+    flavor_dir = os.path.join(work_dir, 'flavors')
     instance_dir = os.path.join(work_dir, 'instances')
     instance_record_file = os.path.join(instance_dir, 'instances.json')
     img_record_file = os.path.join(image_dir, 'images.json')
+    flavor_record_file = os.path.join(flavor_dir, 'flavors.json')
 
     LOG.debug('Initializing EulerLauncherd ...')
     LOG.debug('Checking for work directory ...')
@@ -96,6 +99,18 @@ def init(arch, config, LOG):
             'local': {}
         }
         utils.save_json_data(img_record_file, image_body)
+    
+    LOG.debug('Checking for flavor directory ...')
+    if not os.path.exists(flavor_dir):
+        LOG.debug('Create %s as flavor directory ...' % flavor_dir)
+        os.makedirs(flavor_dir)
+
+    if not os.path.exists(flavor_record_file):
+        flavors = {
+            'flavors': {}
+        }
+        utils.save_json_data(flavor_record_file, flavors)
+    
 
 def serve(arch, host_os, CONF, LOG, base_dir):
     '''
@@ -104,6 +119,7 @@ def serve(arch, host_os, CONF, LOG, base_dir):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     images_pb2_grpc.add_ImageGrpcServiceServicer_to_server(imager_service.ImagerService(arch, host_os, CONF, base_dir), server)
     instances_pb2_grpc.add_InstanceGrpcServiceServicer_to_server(instance_service.InstanceService(arch, host_os, CONF, base_dir), server)
+    flavors_pb2_grpc.add_FlavorGrpcServiceServicer_to_server(flavor_service.FlavorService(arch, host_os, CONF, base_dir), server)
     server.add_insecure_port('[::]:50052')
     server.start()
     LOG.debug('EulerLauncherd Service Started ...')
