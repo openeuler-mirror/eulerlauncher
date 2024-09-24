@@ -1,0 +1,30 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="os_win.utils.storage.virtdisk.VHDUtils" />
+          <option value="打包的程序.GUItest.EulerLauncherGUI.setWindowTitle" />
+          <option value="打包的程序.GUItest.EulerLauncherGUI.setCentralWidget" />
+          <option value="打包的程序.GUItest.EulerLauncherGUI.menuBar" />
+          <option value="PyQt5.QtWidgets.triggered.connect" />
+          <option value="打包的程序.GUItest.EulerLauncherGUI.show" />
+          <option value="GUItest2.Example.show" />
+          <option value="GUItest2.Example.setStyleSheet" />
+          <option value="GUItest2.Example.setCentralWidget" />
+          <option value="GUItest2.Example.setWindowTitle" />
+          <option value="GUItest2.EulerLauncherGUI.setChecked" />
+          <option value="GUItest2.EulerLauncherGUI.text" />
+          <option value="GUItest2.EulerLauncherGUI.setCentralWidget" />
+          <option value="GUItest2.EulerLauncherGUI.setWindowTitle" />
+          <option value="PyQt5.QtWidgets.QFileDialog.QFileDialog.Options" />
+          <option value="GUItest2.EulerLauncherGUI.show" />
+          <option value="PyQt5.QtCore.QObject.setChecked" />
+          <option value="PyQt5.QtCore.QObject.text" />
+          <option value="PyQt5.QtWidgets.clicked.connect" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
