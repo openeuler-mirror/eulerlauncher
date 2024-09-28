@@ -1,5 +1,5 @@
 """
-Author: XiangChenyu
+Author: Xiang Chenyu
 Description: EulerLauncher前端界面
 Tips:
 - take-snapshot与export-development-image功能由于主程序尚未实现，该前端界面在这两部分留空，实现后请补齐
@@ -11,7 +11,7 @@ Tips:
 - 由于主程序暂未对Linux提供支持，因此Linux系统下的终端SSH连接功能还未进行验证，修改请在Line 739处进行
 - 增删改功能请在主界面init_ui或四个界面生成函数(以widget_of开头)中增删改按钮等控件，然后增删改对应的槽函数即可。
 - 本代码中有许多通用方法，如do_cmd、table_process、create_massage_box、create_line等，可以复用
-    它们在Line 374、415、955、964
+    它们在Line 374、415、961、970
 - 请注意，本代码仅为前端界面，后端功能由EulerLauncherd提供，因此请确保整个EulerLauncher已经正确安装并配置好conf文件
 """
 
@@ -733,13 +733,19 @@ class EulerLauncherGUI(QMainWindow):
             subprocess.run(f'start cmd /k {command}', shell=True)
         elif sys.platform == "darwin":
             # macOS系统
-            subprocess.run(['open', '-a', 'Terminal', '--args', 'bash', '-c', f'{command}; exec bash'])
+            applescript = '''
+            tell application "Terminal" 
+            activate
+            do script "{}"
+            end tell
+            '''.format(command)
+            subprocess.run(['osascript'], text=True, input=applescript)
         elif sys.platform == "linux" or sys.platform == "linux2":
             # Linux系统
             terminals = ['terminal', 'gnome-terminal', 'xterm', 'konsole', 'terminator', 'tilix']
             for terminal in terminals:
                 try:
-                    subprocess.run([terminal, '--', 'bash', '-c', f'{command}; exec bash'])
+                    subprocess.run([terminal, '--', 'bash', '-c', f'{command}'])
                     break
                 except FileNotFoundError:
                     continue
