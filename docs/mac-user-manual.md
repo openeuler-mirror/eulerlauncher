@@ -50,7 +50,7 @@ brew install wget
 
 解压后的目录包含以下文件：
 
-<img src="./images/mac-content.jpg" width='30%' hight='30%'/>
+<img src="./images/mac-content.jpg" width='30%' hight='30%'/>  <img src="./images/mac-GUIcontent.png" width='17%' hight='17%'/>
 
 其中`install`可执行文件为安装文件，用于将**EulerLauncher**所需支持文件安装到指定位置，`EulerLauncher.dmg`为主程序的磁盘映象。
 
@@ -102,7 +102,9 @@ brew install wget
 
 4. 安装**eulerlauncherGUI.app**（选装）：
 
-   - 参考上一步，双击`eulerlauncherGUI.dmg`，在弹出的窗口中用鼠标将`eulerlauncherGUI.app`拖动到`Applications`中，即可完成安装，并可在应用程序中找到`eulerlauncherGUI.app`
+    - 参考上一步，双击`eulerlauncherGUI.dmg`，在弹出的窗口中用鼠标将`eulerlauncherGUI.app`拖动到`Applications`中，即可完成安装，并可在应用程序中找到`eulerlauncherGUI.app`
+
+        <img src="./images/mac-GUIinstall.png" width='40%' hight='40%'/>
 
 ## 使用EulerLauncher
 
