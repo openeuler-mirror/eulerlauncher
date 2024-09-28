@@ -38,7 +38,7 @@ memory = 8G
 
 当eulerlauncherd.exe运行后，会在操作系统右下角托盘区域生成eulerlauncherd托盘图标：
 
-<img src="./etc/images/tray-icon.png" width="10%" height="10%"/>
+<img src="../etc/images/tray-icon.png" width="10%" height="10%"/>
 鼠标右键点击托盘图标，并选择 `Exit EulerLauncher` 即可退出EulerLauncherd后台进程。
 
 ### 镜像操作
