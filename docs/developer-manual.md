@@ -49,7 +49,8 @@ EulerLauncher可执行文件包括以下几个部分：
 1. EulerLauncherd: EulerLauncher守护进程，以root权限运行在后台，与调用虚拟化组件(Qemu、HyperV、KVM等)及镜像组件进行相关操作；
 2. EulerLauncher.app: EulerLauncher服务端主程序，将EulerLauncher及其他相关程序、数据、文件等打包为MacOS APP软件包，便于分发和使用。
 3. EulerLauncher: MacOS可执行文件，EulerLauncher客户端CLI工具，用于与服务端交互。
-4. install: MacOS可执行文件，将EulerLauncher运行所需配置文件及相关数据文件安装至`Application Support`文件夹。
+4. eulerlauncherGUI.app: EulerLauncher的客户端GUI程序，用于与服务端交互。
+5. install: MacOS可执行文件，将EulerLauncher运行所需配置文件及相关数据文件安装至`Application Support`文件夹。
 
 由于`EulerLauncher.app`对`EulerLauncherd`有依赖关系，请严格按照以下顺序构建`EulerLauncherd`及`EulerLauncher.app`:
 
@@ -74,6 +75,11 @@ pyinstaller --clean --noconfirm specs/cli-mac.spec
 pyinstaller --clean --noconfirm specs/install.spec
 ```
 
+`eulerlauncherGUI.app`与其他文件之间无依赖关系，可以单独构建：
+``` Shell
+pyinstaller --clean --noconfirm specs/eulerlauncherGUI-Mac.spec
+```
+
 ### 制作`.dmg`：
 
 首先，我们创建一个新目录并将文件移动到其中。
@@ -82,12 +88,19 @@ mkdir -p dist/dmg
 cp -R dist/EulerLauncher.app dist/dmg
 ```
 
-然后，我们可以使用下面的命令来制作磁盘镜像文件:
+然后，我们可以使用下面的命令来制作主程序`EulerLauncher.app`的磁盘镜像文件:
 ``` Shell
 create-dmg --volname "EulerLauncher" --volicon "etc/images/favicon.png" --window-pos 200 120 --window-size 600 300 --icon-size 100 --icon "EulerLauncher.app" 175 120 --hide-extension "EulerLauncher.app" --app-drop-link 425 120 "dist/EulerLauncher.dmg" "dist/dmg/"
 ```
 
-`EulerLauncher.dmg`中将只包含`EulerLauncher.app`主程序，需要将`install`脚本及`EulerLauncher` CLI工具一并压缩后再进行分发。
+类似的，也可以制作出GUI`eulerlauncherGUI.app`的`.dmg`文件：
+``` Shell
+mkdir -p dist/GUIdmg
+cp -R dist/eulerlauncherGUI.app dist/GUIdmg
+create-dmg --volname "eulerlauncherGUI" --volicon "logos/favicon.png" --window-pos 200 120 --window-size 600 300 --icon-size 100 --icon "eulerlauncherGUI.app" 175 120 --hide-extension "eulerlauncherGUI.app" --app-drop-link 425 120 "dist/eulerlauncherGUI.dmg" "dist/GUIdmg/"
+```
+
+`EulerLauncher.dmg`中将只包含`EulerLauncher.app`主程序，`eulerlauncherGUI.dmg`中将只含`eulerlauncherGUI.app`前端界面程序，需要将`install`脚本及`EulerLauncher` CLI工具一并压缩后再进行分发。
 
 
 ## 在Windows上构建EulerLauncher
@@ -122,15 +135,16 @@ EulerLauncher可执行文件包括以下几个部分：
 
 - eulerlauncherd.exe：EulerLauncher的主进程，是运行在后台的守护进程，负责与各类虚拟化后端交互，管理虚拟机、容器以及镜像的生命周期，eulerlauncherd.exe是运行在后台的守护进程。
 - eulerlauncher.exe：EulerLauncher的CLI客户端，用户通过该客户端与eulerlauncherd守护进程交互，对虚拟机、镜像等进行相关操作。
+- eulerlauncherGUI.exe：EulerLauncher的GUI客户端，用户也可以通过该图形化界面客户端与eulerlauncherd守护进程交互，对虚拟机、镜像等进行相关操作。
 - config-env.bat: 帮助用户快速配置环境变量
 
 1. 构建`eulerlauncherd.exe`:
 
-项目源码中已包含用于构建EulerLauncherd的Spec脚本`EulerLauncherd-win.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
+项目源码中已包含用于构建EulerLauncherd的Spec脚本`EulerLauncherd-win.spec`, 若非必要，请勿修改该文件，使用以下命令开始构建：
 
-    ``` Shell
-    pyinstaller --clean --noconfirm specs\\EulerLauncherd-win.spec
-    ```
+``` Shell
+pyinstaller --clean --noconfirm specs\\EulerLauncherd-win.spec
+```
 
 2. 构建`eulerlauncher.exe`:
 
@@ -138,9 +152,15 @@ EulerLauncher可执行文件包括以下几个部分：
 pyinstaller --clean --noconfirm specs\\cli-win.spec
 ```
 
-3. 将`etc\bin`目录下的`config-env.bat`,`qemu`及`qemu-img`文件夹拷贝到制品目录。
+3. 构建`eulerlauncherGUI.exe`:
 
-4. 在制品目录创建`etc`文件夹，将`logos\favicon.png`复制到该目录下，并在该目录下创建`eulerlauncher.conf`文件，最后将制品目录压缩打包
+``` Shell
+pyinstaller --clean --noconfirm specs\\eulerlauncherGUI.spec
+```
+
+4. 将`etc\bin`目录下的`config-env.bat`,`qemu`及`qemu-img`文件夹拷贝到制品目录。
+
+5. 在制品目录创建`etc`文件夹，将`logos\favicon.png`与`logos\favicon.ico`复制到该目录下，并在该目录下创建`eulerlauncher.conf`文件，最后将制品目录压缩打包
 
 [1]: https://www.python.org/
 [2]: https://brew.sh/
