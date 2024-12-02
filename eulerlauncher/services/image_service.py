@@ -1,8 +1,6 @@
 import logging
 import os
 
-from eulerlauncher.backends.mac import image_handler as mac_image_handler
-from eulerlauncher.backends.win import image_handler as win_image_handler
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
 from eulerlauncher.utils import constants as omni_constants
 from eulerlauncher.utils import utils as omni_utils
@@ -11,24 +9,25 @@ from eulerlauncher.utils import utils as omni_utils
 LOG = logging.getLogger(__name__)
 
 
-class ImagerService(images_pb2_grpc.ImageGrpcServiceServicer):
+class ImageService(images_pb2_grpc.ImageGrpcServiceServicer):
     '''
-    The Imager GRPC Handler
+    The Image GRPC Handler
     '''
 
-    def __init__(self, arch, host_os, conf, svc_base_dir) -> None:
-        self.CONF = conf
-        self.svc_base_dir = svc_base_dir
+    def __init__(self, arch, host_os, CONF) -> None:
+        self.CONF = CONF
         self.work_dir = self.CONF.conf.get('default', 'work_dir')
         self.image_dir = os.path.join(self.work_dir, 'images')
         self.img_record_file = os.path.join(self.image_dir, 'images.json')
         if host_os == 'Win':
+            from eulerlauncher.backends.win import image_handler as win_image_handler
             self.backend = win_image_handler.WinImageHandler(
                 self.CONF, self.work_dir, self.image_dir, self.img_record_file, LOG)
         elif host_os == 'MacOS':
+            from eulerlauncher.backends.mac import image_handler as mac_image_handler
             self.backend = mac_image_handler.MacImageHandler(
                 self.CONF, self.work_dir, self.image_dir, self.img_record_file,
-                LOG, self.svc_base_dir)
+                LOG)
 
     def list_images(self, request, context):
         LOG.debug(f"Get request to list images ...")

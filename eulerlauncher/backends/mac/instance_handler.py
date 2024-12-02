@@ -17,7 +17,7 @@ from eulerlauncher.backends.mac import qemu
 class MacInstanceHandler(object):
     
     def __init__(self, conf, work_dir, instance_dir, image_dir,
-                 image_record_file, logger, base_dir) -> None:
+                 image_record_file, logger) -> None:
         self.conf = conf
         self.work_dir = work_dir
         self.instance_dir = instance_dir
@@ -27,7 +27,6 @@ class MacInstanceHandler(object):
         self.driver = qemu.QemuDriver(self.conf, logger)
         self.running_instances = {}
         self.instance_pids = []
-        self.base_dir = base_dir
         self.LOG = logger
 
     def list_instances(self):

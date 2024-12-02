@@ -14,7 +14,7 @@ import time
 
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
 from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2, instances_pb2_grpc
-from eulerlauncher.services import imager_service, instance_service
+from eulerlauncher.services import image_service, instance_service
 from eulerlauncher.utils import constants
 from eulerlauncher.utils import objs
 from eulerlauncher.utils import utils
@@ -29,8 +29,6 @@ if host_os_raw != 'Windows':
 
 parser = argparse.ArgumentParser()
 parser.add_argument('conf_file', help='Configuration file for the application', type=str)
-parser.add_argument('base_dir', help='The base work directory of the daemon')
-
 
 def config_logging(config):
     log_dir = config.conf.get('default', 'log_dir')
@@ -97,14 +95,14 @@ def init(arch, config, LOG):
         }
         utils.save_json_data(img_record_file, image_body)
 
-def serve(arch, host_os, CONF, LOG, base_dir):
+def serve(arch, host_os, CONF, LOG):
     '''
     Run the EulerLauncherd Service
     '''
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    images_pb2_grpc.add_ImageGrpcServiceServicer_to_server(imager_service.ImagerService(arch, host_os, CONF, base_dir), server)
-    instances_pb2_grpc.add_InstanceGrpcServiceServicer_to_server(instance_service.InstanceService(arch, host_os, CONF, base_dir), server)
-    server.add_insecure_port('[::]:50052')
+    images_pb2_grpc.add_ImageGrpcServiceServicer_to_server(image_service.ImageService(arch, host_os, CONF), server)
+    instances_pb2_grpc.add_InstanceGrpcServiceServicer_to_server(instance_service.InstanceService(arch, host_os, CONF), server)
+    server.add_insecure_port('localhost:50052')
     server.start()
     LOG.debug('EulerLauncherd Service Started ...')
 
@@ -121,8 +119,8 @@ def serve(arch, host_os, CONF, LOG, base_dir):
         while True:
             time.sleep(1)
 
-def init_launcherd(conf, base_dir):
-    CONF = objs.Conf(conf)
+def init_launcherd(conf_file):
+    CONF = objs.Conf(conf_file)
 
     config_logging(CONF)
     LOG = logging.getLogger(__name__)
@@ -139,7 +137,7 @@ def init_launcherd(conf, base_dir):
         LOG.debug('Error: ' + str(e))
         return str(e)
     else:
-        return serve(host_arch, host_os, CONF, LOG, base_dir)
+        return serve(host_arch, host_os, CONF, LOG)
 
 
 if __name__ == '__main__':
@@ -147,17 +145,15 @@ if __name__ == '__main__':
     if host_os_raw != 'Windows':
         args = parser.parse_args()
         conf_file = args.conf_file
-        base_dir = args.base_dir
     else:
         conf_file = os.path.join(os.getcwd(), 'etc', 'eulerlauncher.conf')
-        base_dir = None
     try:
         pass
     except Exception as e:
         print('Error: ' + str(e))
     else:
         if host_os_raw != 'Windows':
-            init_launcherd(conf_file, base_dir)
+            init_launcherd(conf_file)
         else:
             try:
                 logo = PIL.Image.open(os.path.join(os.getcwd(), 'etc', 'favicon.png'))
@@ -173,7 +169,7 @@ if __name__ == '__main__':
                 print('Error: ' + str(e))
                 sys.exit(0)
             
-            server = init_launcherd(conf_file, base_dir)
+            server = init_launcherd(conf_file)
 
             icon.run()
             server.stop(None)

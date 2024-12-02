@@ -12,9 +12,8 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
     The Instance GRPC Handler
     '''
 
-    def __init__(self, arch, host_os, conf, svc_base_dir) -> None:
-        self.CONF = conf
-        self.svc_base_dir = svc_base_dir
+    def __init__(self, arch, host_os, CONF) -> None:
+        self.CONF = CONF
         self.work_dir = self.CONF.conf.get('default', 'work_dir')
         self.instance_dir = os.path.join(self.work_dir, 'instances')
         self.instance_record_file = os.path.join(self.instance_dir, 'instances.json')
@@ -28,7 +27,7 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
             from eulerlauncher.backends.mac import instance_handler as mac_instance_handler
             self.backend = mac_instance_handler.MacInstanceHandler(
                 self.CONF, self.work_dir, self.instance_dir, self.image_dir,
-                self.img_record_file, LOG, self.svc_base_dir)
+                self.img_record_file, LOG)
 
     def list_instances(self, request, context):
         LOG.debug(f"Get request to list instances ...")

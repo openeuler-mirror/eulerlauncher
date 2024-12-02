@@ -17,12 +17,11 @@ ssl._create_default_https_context = ssl._create_unverified_context
 class MacImageHandler(object):
 
     def __init__(self, conf, work_dir, image_dir, image_record_file,
-                 logger, base_dir) -> None:
+                 logger) -> None:
         self.conf = conf
         self.work_dir = work_dir
         self.image_dir = image_dir
         self.image_record_file = image_record_file
-        self.base_dir = base_dir
         self.wget_bin = conf.conf.get('default', 'wget_dir')
         self.LOG = logger
 
