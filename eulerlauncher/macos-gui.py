@@ -41,7 +41,7 @@ if __name__ == '__main__':
     except Exception as e:
         print('Error: ' + str(e))
     else:
-        launcherd_cmd = ['sudo', os.path.join(base_dir,'./bin/EulerLauncherd'), CONF_DIR_SHELL, base_dir]
+        launcherd_cmd = [os.path.join(base_dir,'./bin/eulerLauncherd'), CONF_DIR_SHELL]
         launcherd = subprocess.Popen(' '.join(launcherd_cmd), shell=True, preexec_fn=os.setsid)
 
         def term_handler(signum, frame):

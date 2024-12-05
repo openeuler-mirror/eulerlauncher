@@ -8,7 +8,7 @@ from oslo_utils import uuidutils
 
 from eulerlauncher.utils import objs
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as omni_utils
+from eulerlauncher.utils import utils as utils
 from eulerlauncher.backends.win import powershell
 
 SWITCH_NAME = 'Default Switch'
@@ -83,7 +83,7 @@ class VMOps(object):
     def get_instance_ip_addr(self, instance_name):
         nic_name = instance_name + '_eth0'
         nic = self.get_vm_nics(instance_name, nic_name)
-        mac_address = omni_utils.format_mac_addr(nic.Address)
+        mac_address = utils.format_mac_addr(nic.Address)
         with powershell.PowerShell('GBK') as ps:
             outs, errs = ps.run('arp -a | findstr /i {}'.format(mac_address))
         ip_address = outs.strip(' ').split(' ')[0]

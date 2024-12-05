@@ -22,7 +22,6 @@ message Image {
 message ListImageRequest {
 }
 
-
 message ListImageResponse {
     repeated Image images = 1;
 }

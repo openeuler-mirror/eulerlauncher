@@ -1,0 +1,26 @@
+<domain type="hvf">
+  <name>test</name>
+  <cpu mode="host-passthrough"/>
+  <vcpu>2</vcpu>
+  <memory unit="MiB">1024</memory>
+  <os firmware="efi">
+    <type arch="aarch64" machine="virt">hvm</type>
+  </os>
+
+  <devices>
+
+    <emulator>/opt/homebrew/Cellar/qemu/9.0.2/bin/qemu-system-aarch64</emulator>
+
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2"/>
+      <source file="/Users/dengzhihang/Downloads/qemu/openEuler-22.03-LTS-aarch64.qcow2"/>
+      <target dev="sda" bus="virtio"/>
+    </disk>
+
+    <console type="pty">
+      <target type="virtio" port="0"/>
+      <alias name="console0"/>
+    </console>
+
+  </devices>
+</domain>

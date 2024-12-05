@@ -1,176 +1,105 @@
 import os
-import psutil
+import libvirt
 import shutil
-import signal
-import subprocess
-import sys
-import time
-
-from oslo_utils import uuidutils
+import platform
 
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as omni_utils
-from eulerlauncher.utils import objs
-from eulerlauncher.backends.mac import qemu
+from eulerlauncher.utils import utils
 
 
 class MacInstanceHandler(object):
     
-    def __init__(self, conf, work_dir, instance_dir, image_dir,
-                 image_record_file, logger) -> None:
-        self.conf = conf
+    def __init__(self, CONF, work_dir, instance_dir, image_dir, LOG) -> None:
+        self.conf = CONF
         self.work_dir = work_dir
         self.instance_dir = instance_dir
         self.instance_record_file = os.path.join(instance_dir, 'instances.json')
         self.image_dir = image_dir
-        self.image_record_file = image_record_file
-        self.driver = qemu.QemuDriver(self.conf, logger)
-        self.running_instances = {}
-        self.instance_pids = []
-        self.LOG = logger
+        self.image_record_file = os.path.join(image_dir, 'images.json')
+        self.LOG = LOG
 
     def list_instances(self):
-        instances = omni_utils.load_json_data(self.instance_record_file)['instances']
-        vm_list = []
+        instance_record = utils.load_json_data(self.instance_record_file)
+        all_instances = list(instance_record.values())
+        return all_instances
 
-        for instance in instances.values():
-            vm = objs.Instance(name=instance['name'])
-            vm.uuid = instance['uuid']
-            vm.mac = instance['mac_address']
-            vm.info = None
-            vm.vm_state = self._check_vm_state(instance)
-            if not instance['ip_address']:
-                ip_address = self._parse_ip_addr(vm.mac)
-                vm.ip = ip_address
-            else:
-                vm.ip = instance['ip_address']
-            vm.image = instance['image']
-            vm_list.append(vm)
-
-        return vm_list
-
-    def _check_vm_state(self, instance):
-        if instance['identification']['type'] == 'pid':
-            instance_pid = instance['identification']['id']
-            if instance_pid in psutil.pids() and \
-                psutil.Process(instance_pid).status() == 'running' and \
-                psutil.Process(instance_pid).name().startswith('qemu'):
-                return constants.VM_STATE_MAP[2]
-            else:
-                return constants.VM_STATE_MAP[3]
-        else:
-            return constants.VM_STATE_MAP[99]
-
-    def _parse_ip_addr(self, mac_addr):
-        ip = ''
-        cmd = 'arp -a'
-        start_time = time.time()
-        while(ip == '' and time.time() - start_time < 20):
-            pr = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
-            arp_result = pr.stdout.decode('utf-8').split('\n')
-            founded = False
-            for str in arp_result:
-                # The result for 'arp -a' in MacOS is different with Linux, it erase
-                # the first 0 if the first digit is 0 for this mac section, add it
-                # back before compare
-                try:
-                    arp_ip = str.split(' ')[1].replace("(", "").replace(")", "")
-                    mac = str.split(' ')[3].replace("(", "").replace(")", "")
-                except IndexError:
-                    continue
-                mac_list = mac.split(':')
-                for i in range(0, len(mac_list)):
-                    if len(mac_list[i]) == 1:
-                        mac_list[i] = '0' + mac_list[i]
-                mac_0 = ':'.join(mac_list)
-                if mac_addr == mac_0:
-                    ip = arp_ip
-                    founded = True
-                    break
-            if founded:
-                break
-        
-        return ip
-
-    def check_names(self, name, all_instances):
-        try:
-            all_instances['instances'][name]
+    def create_instance(self, name, image):
+        image_record = utils.load_json_data(self.image_record_file)
+        if image not in image_record['local'].keys():
+            self.LOG.debug(f'Image: {image} is not available locally')
             return 1
-        except KeyError:
-            return 0
-
-    def create_instance(self, name, image_id, instance_record, all_instances, all_images):
-        # Create dir for the instance
-        vm_uuid = uuidutils.generate_uuid()
-        vm_dict = {
-            'name': name,
-            'uuid': vm_uuid,
-            'image': image_id,
-            'vm_state': constants.VM_STATE_MAP[99],
-            'ip_address': 'N/A',
-            'mac_address': omni_utils.generate_mac(),
-            'identification': {
-                'type': 'pid',
-                'id': None
-            }
-        }
-
+        
+        instance_record = utils.load_json_data(self.instance_record_file)
+        if name in instance_record.keys():
+            self.LOG.debug(f'Instance: {name} already exist')
+            return 2
+        
         instance_path = os.path.join(self.instance_dir, name)
         os.makedirs(instance_path)
-        img_path = all_images['local'][image_id]['path']
-    
-        root_disk_path = shutil.copyfile(img_path, os.path.join(instance_path, image_id + '.qcow2'))
+        image_path = image_record['local'][image]['path']
+        disk_path = shutil.copyfile(image_path, os.path.join(instance_path, image))
+        host_arch_raw = platform.uname().machine
+        host_arch = constants.ARCH_MAP[host_arch_raw]
+        xml_file = os.path.join('/Library/Application Support/org.openeuler.eulerlauncher/','libvirt-' + host_arch + '.xml')
+        xml = utils.load_xml_data(xml_file)
+        vcpu = self.conf.conf.get('vm', 'cpu_num')
+        ram = self.conf.conf.get('vm', 'memory')
 
-        vm_process = self.driver.create_vm(name, vm_uuid, vm_dict['mac_address'], root_disk_path)
-
-        self.running_instances[vm_process.pid] = vm_process
-        self.instance_pids.append(vm_process.pid)
-        
-        vm_dict['identification']['id'] = vm_process.pid
-
-        vm_ip = self._parse_ip_addr(vm_dict['mac_address'])
-        vm_dict['ip_address'] = vm_ip
-
-        instance_record_dict = {
-            'name': name,
-            'uuid': vm_dict['uuid'],
-            'image': image_id,
-            'path': instance_path,
-            'mac_address': vm_dict['mac_address'],
-            'ip_address': vm_dict['ip_address'],
-            'identification': vm_dict['identification']
-        }
-
-        all_instances['instances'][name] = instance_record_dict
-        omni_utils.save_json_data(instance_record, all_instances)
-
-        return {
-            'name': name,
-            'vm_state': self._check_vm_state(vm_dict),
-            'image': image_id,
-            'ip_address': vm_dict['ip_address']
-        }
-
-    def delete_instance(self, name, instance_record, all_instances):
-        # Delete instance process
-        instance = all_instances['instances'][name]
-        if instance['identification']['type'] == 'pid':            
-            instance_pid = instance['identification']['id']
-            if instance_pid in psutil.pids() and \
-                psutil.Process(instance_pid).is_running():
-                psutil.Process(instance_pid).kill()
-                self.LOG.debug(f'Instance: {name} with PID {instance_pid} succesfully killed ...')
+        def xml_find_and_set(xml, xpath, attribute=None, value=None):
+            elements = xml.xpath(xpath)
+            if attribute is not None:
+                if value is not None:
+                    elements[0].set(attribute, value)
+                return elements[0].get(attribute)
             else:
-                self.LOG.debug(f'Instance: {name} with PID {instance_pid} already stopped, skip ...')
+                if value is not None:
+                    elements[0].text = value
+                return elements[0].text
+
+        xml_find_and_set(xml, 'name', value=name)
+        xml_find_and_set(xml, 'vcpu', value=vcpu)
+        xml_find_and_set(xml, 'memory', value=ram)
+        xml_find_and_set(xml, 'devices/emulator', value=self.conf.conf.get('default', 'qemu_dir'))
+        xml_find_and_set(xml, 'devices/disk/source', 'file', disk_path)
+        utils.save_xml_data(xml_file, xml)
+        
+        conn = libvirt.open("qemu:///session")
+        with open(xml_file, 'r') as pr:
+            dom = conn.createLinux(pr.read())
+        
+        instance_record[name] = {
+            'id': dom.ID(),
+            'name': name,
+            'state': constants.INSTANCE_STATE_MAP[dom.state()[0]],
+            'vcpu': dom.maxVcpus(),
+            'ram': dom.maxMemory() // 1024,
+            'image': image,
+            'mac_address': 'N/A',
+            'ip_address': 'N/A',
+            'path': instance_path
+        }
+        utils.save_json_data(self.instance_record_file, instance_record)
+        conn.close()
+        return 0
+
+    def delete_instance(self, name):
+        instance_record = utils.load_json_data(self.instance_record_file)
+
+        conn = libvirt.open("qemu:///session")
+        dom = conn.lookupByName(name)
+
+        if dom is not None:
+            dom.destroy()
+            self.LOG.debug(f'Instance: {name} succesfully killed ...')
         else:
-            self.LOG.debug(f'Instance: {name} unable to handled, skip ...')
+            self.LOG.debug(f'Instance: {name} already stopped, skip ...')
 
         # Cleanup files and records
-        instance_dir = instance['path']
-        shutil.rmtree(instance_dir)
-        del all_instances['instances'][name]
+        instance_path = instance_record[name]['path']
+        shutil.rmtree(instance_path)
+        del instance_record[name]
 
-        omni_utils.save_json_data(instance_record, all_instances)
-
+        utils.save_json_data(self.instance_record_file, instance_record)
+        conn.close()
         return 0
 

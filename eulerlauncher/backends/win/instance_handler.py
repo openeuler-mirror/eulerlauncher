@@ -9,7 +9,7 @@ from os_win import exceptions as os_win_exc
 from eulerlauncher.backends.win import powershell
 from eulerlauncher.backends.win import vmops
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as omni_utils
+from eulerlauncher.utils import utils as utils
 from eulerlauncher.utils import objs
 
 
@@ -73,7 +73,7 @@ class WinInstanceHandler(object):
         }
 
         all_instances['instances'][name] = instance_record_dict
-        omni_utils.save_json_data(instance_record, all_instances)
+        utils.save_json_data(instance_record, all_instances)
 
         return {
             'name': name,
@@ -91,7 +91,7 @@ class WinInstanceHandler(object):
         shutil.rmtree(instance_dir)
         del all_instances['instances'][name]
 
-        omni_utils.save_json_data(instance_record, all_instances)
+        utils.save_json_data(instance_record, all_instances)
 
         return 0
 
