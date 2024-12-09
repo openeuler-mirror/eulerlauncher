@@ -6,7 +6,7 @@ import shutil
 import ssl
 
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as utils
+from eulerlauncher.utils import utils
 
 
 ssl._create_default_https_context = ssl._create_unverified_context

@@ -1,20 +1,25 @@
 <domain type='qemu'>
-  <name>test</name>
-  <vcpu>2</vcpu>
-  <memory unit='MiB'>2</memory>
+  <name></name>
+  <vcpu></vcpu>
+  <memory unit='MiB'></memory>
   <os>
     <type arch='x86_64' machine='pc'>hvm</type>
   </os>
 
   <devices>
 
-    <emulator>/opt/homebrew/Cellar/qemu/9.0.2/bin/qemu-system-x86_64</emulator>
+    <emulator></emulator>
 
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='/Users/dengzhihang/Downloads/qemu/openEuler-22.03-LTS-x86_64.qcow2'/>
+      <source file=''/>
       <target dev='hda' bus='virtio'/>
     </disk>
+
+    <interface type='user'>
+      <mac address=''/>
+      <model type='virtio'/>
+    </interface>
 
     <console type='pty'>
         <target type='virtio' port='0'/>

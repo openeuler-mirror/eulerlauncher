@@ -8,7 +8,7 @@ from oslo_utils import uuidutils
 
 from eulerlauncher.utils import objs
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as utils
+from eulerlauncher.utils import utils
 from eulerlauncher.backends.win import powershell
 
 SWITCH_NAME = 'Default Switch'

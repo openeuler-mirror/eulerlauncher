@@ -61,6 +61,7 @@ class MacInstanceHandler(object):
         xml_find_and_set(xml, 'memory', value=ram)
         xml_find_and_set(xml, 'devices/emulator', value=self.conf.conf.get('default', 'qemu_dir'))
         xml_find_and_set(xml, 'devices/disk/source', 'file', disk_path)
+        xml_find_and_set(xml, 'devices/interface/mac', 'address', utils.generate_mac())
         utils.save_xml_data(xml_file, xml)
         
         conn = libvirt.open("qemu:///session")
@@ -74,7 +75,7 @@ class MacInstanceHandler(object):
             'vcpu': dom.maxVcpus(),
             'ram': dom.maxMemory() // 1024,
             'image': image,
-            'mac_address': 'N/A',
+            'mac_address': '',
             'ip_address': 'N/A',
             'path': instance_path
         }

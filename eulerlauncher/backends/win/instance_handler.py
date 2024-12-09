@@ -9,7 +9,7 @@ from os_win import exceptions as os_win_exc
 from eulerlauncher.backends.win import powershell
 from eulerlauncher.backends.win import vmops
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as utils
+from eulerlauncher.utils import utils
 from eulerlauncher.utils import objs
 
 

@@ -14,7 +14,7 @@ oslo.i18n
 oslo.log
 oslo.serialization
 oslo.utils
-Pillow
+pillow
 prettytable
 protobuf
 psutil
@@ -23,3 +23,4 @@ PyYAML
 six
 urllib3
 wget
+libvirt-python

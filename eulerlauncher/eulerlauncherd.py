@@ -1,5 +1,4 @@
 import argparse
-from concurrent import futures
 import grpc
 import logging
 import os
@@ -8,9 +7,10 @@ import platform
 import pystray
 import requests
 import signal
-import subprocess
 import sys
 import time
+from concurrent import futures
+
 
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
 from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2, instances_pb2_grpc
