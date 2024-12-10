@@ -7,7 +7,7 @@ import ssl
 
 from eulerlauncher.backends.win import powershell
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as omni_utils
+from eulerlauncher.utils import utils
 from eulerlauncher.utils import objs
 
 
@@ -24,11 +24,11 @@ class WinImageHandler(object):
         self.LOG = logger
         self.pattern = conf.conf.get('default', 'pattern')
 
-    def download_and_transform(self, images, img_to_download):
+    def download_and_transform(self, images, image_to_download):
 
         # Download the image
-        img_name = wget.filename_from_url(images['remote'][img_to_download]['path'])
-        img_dict = copy.deepcopy(images['remote'][img_to_download])
+        image_name = wget.filename_from_url(images['remote'][image_to_download]['path'])
+        img_dict = copy.deepcopy(images['remote'][image_to_download])
         downloaded_bytes = 0
 
         def progress_bar(current, total, width):
@@ -36,49 +36,42 @@ class WinImageHandler(object):
             if current == 0 or current - downloaded_bytes > 1024*1024 or current == total:
                 progress_percent = int((current / total) * 100)
                 downloaded_bytes = current
-                with open(os.path.join(self.image_dir, 'download_progress_bar_' + img_to_download), 'w') as progress_file:
+                with open(os.path.join(self.image_dir, 'download_progress_bar_' + image_to_download), 'w') as progress_file:
                     progress_file.write(f"{current/1024/1024: .2f}/{total/1024/1024: .2f}MB ({progress_percent}%)")
 
-        if not os.path.exists(os.path.join(self.image_dir, img_name)):
-            self.LOG.debug(f'Downloading image: {img_to_download} from remote repo ...')
+        if not os.path.exists(os.path.join(self.image_dir, image_name)):
+            self.LOG.debug(f'Downloading image: {image_to_download} from remote repo ...')
             img_dict['location'] = constants.IMAGE_LOCATION_LOCAL
             img_dict['status'] = constants.IMAGE_STATUS_DOWNLOADING
-            images['local'][img_to_download] = img_dict
-            omni_utils.save_json_data(self.image_record_file, images)
-            wget.download(url=images['remote'][img_to_download]['path'], out=os.path.join(self.image_dir, img_name), bar=progress_bar)
-            self.LOG.debug(f'Image: {img_to_download} succesfully downloaded from remote repo ...')
+            images['local'][image_to_download] = img_dict
+            utils.save_json_data(self.image_record_file, images)
+            wget.download(url=images['remote'][image_to_download]['path'], out=os.path.join(self.image_dir, image_name), bar=None)
+            self.LOG.debug(f'Image: {image_to_download} succesfully downloaded from remote repo ...')
     
         # Decompress the image
-        self.LOG.debug(f'Decompressing image file: {img_name} ...')
-        qcow2_name = img_to_download + '.qcow2'
-        with open(os.path.join(self.image_dir, img_name), 'rb') as pr, open(os.path.join(self.image_dir, qcow2_name), 'wb') as pw:
+        self.LOG.debug(f'Decompressing image file: {image_name} ...')
+        qcow2_name = image_name[:-3]
+        with open(os.path.join(self.image_dir, image_name), 'rb') as pr, open(os.path.join(self.image_dir, qcow2_name), 'wb') as pw:
             data = pr.read()
             data_dec = lzma.decompress(data)
             pw.write(data_dec)
 
-        image_name = ""
-        if self.pattern == "hyper-v":
-            # Convert the img to vhdx
-            vhdx_name = img_to_download + '.vhdx'
-            image_name = vhdx_name
-            self.LOG.debug(f'Converting image file: {img_name} to {vhdx_name} ...')
-            with powershell.PowerShell('GBK') as ps:
-                cmd = 'qemu-img convert -O vhdx {0} {1}'
-                outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, qcow2_name), os.path.join(self.image_dir, vhdx_name)))
+        vhdx_name = image_to_download + '.vhdx'
+        self.LOG.debug(f'Converting image file: {image_name} to {vhdx_name} ...')
+        with powershell.PowerShell('GBK') as ps:
+            cmd = 'qemu-img convert -O vhdx {0} {1}'
+            outs, errs = ps.run(cmd.format(os.path.join(self.image_dir, qcow2_name), os.path.join(self.image_dir, vhdx_name)))
 
-            self.LOG.debug(f'Cleanup temp files ...')
-            os.remove(os.path.join(self.image_dir, qcow2_name))
-            if os.path.exists(os.path.join(self.image_dir, "download_progress_bar_" + img_to_download)):
-                os.remove(os.path.join(self.image_dir, "download_progress_bar_" + img_to_download))
-        elif self.pattern == 'qemu':
-            image_name = qcow2_name
-
+        self.LOG.debug(f'Cleanup temp files ...')
+        os.remove(os.path.join(self.image_dir, qcow2_name))
+ 
         # Record local image
         img_dict['status'] = constants.IMAGE_STATUS_READY
-        img_dict['path'] = os.path.join(self.image_dir, image_name)
-        images['local'][img_to_download] = img_dict
-        omni_utils.save_json_data(self.image_record_file, images)
-        self.LOG.debug(f'Image: {img_to_download} is ready ...')
+        img_dict['path'] = os.path.join(self.image_dir, vhdx_name)
+
+        images['local'][image_to_download] = img_dict
+        utils.save_json_data(self.image_record_file, images)
+        self.LOG.debug(f'Image: {image_to_download} is ready ...')
 
     def download_progress_bar(self, img_name):
         progress_bar = ""
@@ -105,7 +98,7 @@ class WinImageHandler(object):
         
         self.LOG.debug(f'Deleting: {img_to_delete} from image database ...')
         del images['local'][img_to_delete]
-        omni_utils.save_json_data(self.image_record_file, images)
+        utils.save_json_data(self.image_record_file, images)
 
         return 0
 
@@ -120,7 +113,7 @@ class WinImageHandler(object):
         image.location = constants.IMAGE_LOCATION_LOCAL
         image.status = constants.IMAGE_STATUS_LOADING
         images['local'][image.name] = image.to_dict()
-        omni_utils.save_json_data(self.image_record_file, images)
+        utils.save_json_data(self.image_record_file, images)
 
         if fmt not in constants.IMAGE_LOAD_SUPPORTED_TYPES_COMPRESSED:
             img_name = f'{img_to_load}.{fmt}'
@@ -156,14 +149,14 @@ class WinImageHandler(object):
         image.path = os.path.join(self.image_dir, image_name)
         image.status = constants.IMAGE_STATUS_READY
         images['local'][image.name] = image.to_dict()
-        omni_utils.save_json_data(self.image_record_file, images)
+        utils.save_json_data(self.image_record_file, images)
         self.LOG.debug(f'Image: {image_name} is ready ...')
 
     def load_progress_bar(self, img_name):
         progress_bar_lines = []
         progress_bar_path = os.path.join(self.image_dir, "load_progress_bar_" + img_name)
         if os.path.exists(progress_bar_path):
-            with open(progress_bar_path, 'r', encoding=omni_utils.detect_encoding(progress_bar_path), errors='ignore') as progress_bar_file:
+            with open(progress_bar_path, 'r', encoding=utils.detect_encoding(progress_bar_path), errors='ignore') as progress_bar_file:
                 progress_bar_lines = progress_bar_file.readlines()
         if len(progress_bar_lines) > 1 and progress_bar_lines[-2].strip() != "":
             return constants.IMAGE_STATUS_LOADING + ": " + progress_bar_lines[-2].strip()
