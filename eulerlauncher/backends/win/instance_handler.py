@@ -11,7 +11,7 @@ from os_win import exceptions as os_win_exc
 
 from eulerlauncher.backends.win import vmops
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as omni_utils
+from eulerlauncher.utils import utils
 from eulerlauncher.utils import objs
 from eulerlauncher.backends.win import qemu
 
@@ -46,7 +46,7 @@ class WinInstanceHandler(object):
 
     def list_instances(self):
 
-        instances = omni_utils.load_json_data(self.instance_record_file)['instances']
+        instances = utils.load_json_data(self.instance_record_file)['instances']
         vm_list = []
 
         if self.pattern == 'qemu':
@@ -82,7 +82,7 @@ class WinInstanceHandler(object):
             'image': image_id,
             'vm_state': constants.VM_STATE_MAP[99],
             'ip_address': 'N/A',
-            'mac_address': omni_utils.generate_mac() if self.pattern == 'qemu' else 'N/A',
+            'mac_address': utils.generate_mac() if self.pattern == 'qemu' else 'N/A',
             'identification': {'type': 'pid','id': None} if self.pattern == 'qemu' else {'type': 'name','id': name}
         }
         if self.pattern == 'qemu':
@@ -112,7 +112,7 @@ class WinInstanceHandler(object):
         }
 
         all_instances['instances'][name] = instance_record_dict
-        omni_utils.save_json_data(instance_record, all_instances)
+        utils.save_json_data(instance_record, all_instances)
 
         return {
             'name': name,
@@ -150,7 +150,7 @@ class WinInstanceHandler(object):
             shutil.rmtree(instance_dir)
         del all_instances['instances'][name]
 
-        omni_utils.save_json_data(instance_record, all_instances)
+        utils.save_json_data(instance_record, all_instances)
 
         return 0
 
