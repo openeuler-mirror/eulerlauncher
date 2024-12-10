@@ -28,4 +28,4 @@ wget
 pywebview
 sqlalchemy
 httpx
-libvirt
+libvirt-python

@@ -24,3 +24,4 @@ PyYAML
 six
 urllib3
 wget
+libvirt-python
