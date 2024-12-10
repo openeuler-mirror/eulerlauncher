@@ -3,8 +3,8 @@ import json
 import os
 import random
 from threading import Thread
+from lxml import etree
 import uuid
-import chardet
 
 
 from google.protobuf.json_format import MessageToDict
@@ -53,13 +53,21 @@ def format_mac_addr(mac_str):
 
 def load_json_data(json_file):
     with open(json_file, 'r', encoding='utf-8') as fr:
-            data = json.load(fr)
+        data = json.load(fr)
         
     return data
 
 def save_json_data(json_file, data):
     with open(json_file, 'w', encoding='utf-8') as fw:
-            json.dump(data, fw, indent=4, ensure_ascii=False)
+        json.dump(data, fw, indent=4, ensure_ascii=False)
+
+def load_xml_data(xml_file):
+    data = etree.parse(xml_file)
+    return data
+
+def save_xml_data(xml_file, data):
+    with open(xml_file, 'wb') as fw:
+        fw.write(etree.tostring(data, pretty_print=True, encoding='utf-8'))
 
 def generate_mac():
     local_mac = uuid.uuid1().hex[-12:]
@@ -93,9 +101,3 @@ def check_file_tail(file_name, to_check):
             break
     
     return ret, ret_fmt
-
-def detect_encoding(file_path):
-    with open(file_path, 'rb') as file:
-        raw_data = file.read()
-        result = chardet.detect(raw_data)
-    return result['encoding']

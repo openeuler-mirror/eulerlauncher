@@ -23,12 +23,15 @@ ARCH_MAP = {
     'x86_64': 'x86_64'
 }
 
-VM_STATE_MAP = {
-    2: 'Running',
-    3: 'Stopped',
-    10: 'Rebooting',
-    32768: 'Paused',
-    32769: 'Suspended',
+INSTANCE_STATE_MAP = {
+    0: 'N/A',
+    1: 'Running',
+    2: 'Blocked',
+    3: 'Paused',
+    4: 'Shutdown',
+    5: 'Shutoff',
+    6: 'Crashed',
+    7: 'Suspended',
     99: 'N/A'
     }
 

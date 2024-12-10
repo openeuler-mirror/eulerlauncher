@@ -174,20 +174,7 @@ def launch(vm_name, image, arch):
     except Exception:
         print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
     else:
-
-        if ret['ret'] == 1:
-            tb = pt.PrettyTable()
-            tb.field_names = ["Name", "Image", "State", "IP"]
-            tb.add_row(
-                [ret['instance']['name'],
-                ret['instance']['image'],
-                ret['instance']['vmState'],
-                ret['instance']['ipAddress']])
-
-            print(tb)
-    
-        else:
-            print(ret['msg'])
+        print(ret['msg'])
 
 @click.command()
 @click.argument('vm_name')
