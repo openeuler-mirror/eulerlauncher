@@ -6,8 +6,82 @@ from eulerlauncher.grpcs import client
 
 launcher_client = client.Client()
 
+
+@click.group(
+    name="image",
+    help="Command for managing images "
+)
+def image():
+    pass
+
+
+# List all usable images
+@image.command()
+def list():
+
+    try:
+        ret = launcher_client.list_images()
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        tb = pt.PrettyTable()
+
+        tb.field_names = ["Images", "Location", "Status"]
+
+        for image in ret['images']:
+            tb.add_row(
+                [image['name'], image['location'], image['status']])
+
+        print(tb)
+
+
+@image.command()
+@click.argument('name')
+def download(name):
+
+    try:
+        ret = launcher_client.download_image(name)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+
+@image.command()
+@click.argument('name')
+@click.option('--path', help='Image file to load')
+def load(name, path):
+
+    try:
+        ret = launcher_client.load_image(name, path)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+
+@image.command()
+@click.argument('name')
+def delete(name):
+
+    try:
+        ret = launcher_client.delete_image(name)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+
+@click.group(
+    name="instance",
+    help="Command for managing instances "
+)
+def instance():
+    pass
+
+
 # List all instances on the host
-@click.command()
+@instance.command()
 def list():
 
     try:
@@ -32,66 +106,9 @@ def list():
         print(tb)
 
 
-# List all usable images
-@click.command()
-def images():
-
-    try:
-        ret = launcher_client.list_images()
-    except Exception:
-        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
-    else:
-        tb = pt.PrettyTable()
-
-        tb.field_names = ["Images", "Location", "Status"]
-
-        for image in ret['images']:
-            tb.add_row(
-                [image['name'], image['location'], image['status']])
-
-        print(tb)
-
-
-@click.command()
+@instance.command()
 @click.argument('name')
-def download_image(name):
-
-    try:
-        ret = launcher_client.download_image(name)
-    except Exception:
-        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
-    else:
-        print(ret['msg'])
-
-
-@click.command()
-@click.argument('name')
-@click.option('--path', help='Image file to load')
-def load_image(name, path):
-
-    try:
-        ret = launcher_client.load_image(name, path)
-    except Exception:
-        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
-    else:
-        print(ret['msg'])
-
-
-@click.command()
-@click.argument('name')
-def delete_image(name):
-
-    try:
-        ret = launcher_client.delete_image(name)
-    except Exception:
-        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
-    else:
-        print(ret['msg'])
-
-
-@click.command()
-@click.argument('name')
-def delete_instance(name):
+def delete(name):
 
     try:
         ret = launcher_client.delete_instance(name)
@@ -100,9 +117,9 @@ def delete_instance(name):
     else:
         print(ret['msg'])
 
-@click.command()
+@instance.command()
 @click.argument('vm_name')
-@click.option('--image', help='Image to build vm')
+@click.option('--image', help='Image to build instance')
 def launch(vm_name, image):
 
     try:
@@ -114,16 +131,11 @@ def launch(vm_name, image):
 
 
 @click.group()
-def cli():
+def entrance():
     pass
 
 
 if __name__ == '__main__':
-    cli.add_command(list)
-    cli.add_command(images)
-    cli.add_command(download_image)
-    cli.add_command(load_image)
-    cli.add_command(launch)
-    cli.add_command(delete_image)
-    cli.add_command(delete_instance)
-    cli()
+    entrance.add_command(image)
+    entrance.add_command(instance)
+    entrance()

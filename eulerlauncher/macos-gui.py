@@ -5,10 +5,10 @@ import pystray
 import subprocess
 import signal
 import sys
+import configparser
 
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import objs
-
+from eulerlauncher.utils import exceptions
 
 CONF_DIR_SHELL = '/Library/Application\ Support/org.openeuler.eulerlauncher/eulerlauncher.conf'
 CONF_DIR = '/Library/Application Support/org.openeuler.eulerlauncher/eulerlauncher.conf'
@@ -26,7 +26,10 @@ if __name__ == '__main__':
         conf_file = CONF_DIR
         logo_file = os.path.join(base_dir,'./etc/favicon.png')
 
-        CONF = objs.Conf(conf_file)
+        CONF = configparser.ConfigParser()
+        if not os.path.exists(conf_file):
+            raise exceptions.NoSuchFile(file=conf_file)
+        CONF.read(conf_file)
 
         logo = PIL.Image.open(logo_file)
 

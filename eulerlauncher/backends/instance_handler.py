@@ -10,7 +10,7 @@ from eulerlauncher.utils import utils
 class MacInstanceHandler(object):
     
     def __init__(self, CONF, work_dir, instance_dir, image_dir, LOG) -> None:
-        self.conf = CONF
+        self.CONF = CONF
         self.work_dir = work_dir
         self.instance_dir = instance_dir
         self.instance_record_file = os.path.join(instance_dir, 'instances.json')
@@ -42,8 +42,8 @@ class MacInstanceHandler(object):
         host_arch = constants.ARCH_MAP[host_arch_raw]
         xml_file = os.path.join('/Library/Application Support/org.openeuler.eulerlauncher/','libvirt-' + host_arch + '.xml')
         xml = utils.load_xml_data(xml_file)
-        vcpu = self.conf.conf.get('vm', 'cpu_num')
-        ram = self.conf.conf.get('vm', 'memory')
+        vcpu = self.CONF.get('vm', 'cpu_num')
+        ram = self.CONF.get('vm', 'memory')
 
         def xml_find_and_set(xml, xpath, attribute=None, value=None):
             elements = xml.xpath(xpath)
@@ -59,7 +59,7 @@ class MacInstanceHandler(object):
         xml_find_and_set(xml, 'name', value=name)
         xml_find_and_set(xml, 'vcpu', value=vcpu)
         xml_find_and_set(xml, 'memory', value=ram)
-        xml_find_and_set(xml, 'devices/emulator', value=self.conf.conf.get('default', 'qemu_dir'))
+        xml_find_and_set(xml, 'devices/emulator', value=self.CONF.get('default', 'qemu_dir'))
         xml_find_and_set(xml, 'devices/disk/source', 'file', disk_path)
         xml_find_and_set(xml, 'devices/interface/mac', 'address', utils.generate_mac())
         utils.save_xml_data(xml_file, xml)

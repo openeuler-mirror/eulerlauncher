@@ -15,7 +15,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 class MacImageHandler(object):
 
     def __init__(self, CONF, work_dir, image_dir, LOG) -> None:
-        self.conf = CONF
+        self.CONF = CONF
         self.work_dir = work_dir
         self.image_dir = image_dir
         self.image_record_file = os.path.join(image_dir, 'images.json')
@@ -49,7 +49,7 @@ class MacImageHandler(object):
                 'path': image_url
             }
             utils.save_json_data(self.image_record_file, image_record)
-            wget_bin = self.conf.conf.get('default', 'wget_dir')
+            wget_bin = self.CONF.get('default', 'wget_dir')
             download_cmd = [wget_bin, image_url,
                             '-O', os.path.join(self.image_dir, image_file), 
                             '--no-check-certificate',
@@ -98,7 +98,7 @@ class MacImageHandler(object):
             self.LOG.debug(f'Image: {path} does not exist')
             return 1
 
-        supported, fmt = utils.check_file_tail(path, constants.IMAGE_LOAD_SUPPORTED_TYPES)
+        supported, fmt = utils.check_format(path, constants.IMAGE_LOAD_SUPPORTED_TYPES)
         if not supported:
             self.LOG.debug(f'Image: {name} not valid for load')
             return 2
@@ -106,7 +106,7 @@ class MacImageHandler(object):
         @utils.asyncwrapper
         def load_and_transform(name, path):
             image_record = utils.load_json_data(self.image_record_file)
-            supported, fmt = utils.check_file_tail(path, constants.IMAGE_LOAD_SUPPORTED_TYPES)
+            supported, fmt = utils.check_format(path, constants.IMAGE_LOAD_SUPPORTED_TYPES)
             self.LOG.debug(f'Loading image: {name} from image file: {path} ...')
             image_record['local'][name] = {
                 'name': name,

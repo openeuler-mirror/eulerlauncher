@@ -9,14 +9,15 @@ import requests
 import signal
 import sys
 import time
+import configparser
 from concurrent import futures
 
 
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
 from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2, instances_pb2_grpc
 from eulerlauncher.services import image_service, instance_service
+from eulerlauncher.utils import exceptions
 from eulerlauncher.utils import constants
-from eulerlauncher.utils import objs
 from eulerlauncher.utils import utils
 
 
@@ -30,9 +31,9 @@ if host_os_raw != 'Windows':
 parser = argparse.ArgumentParser()
 parser.add_argument('conf_file', help='Configuration file for the application', type=str)
 
-def init_log(config):
-    log_dir = config.conf.get('default', 'log_dir')
-    debug = config.conf.get('default', 'debug')
+def init_log(CONF):
+    log_dir = CONF.get('default', 'log_dir')
+    debug = CONF.get('default', 'debug')
 
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -48,8 +49,8 @@ def init_log(config):
         filename=log_file, level=log_level, filemode='a+')
 
 
-def init_workdir(arch, config, LOG):
-    work_dir = config.conf.get('default', 'work_dir')
+def init_workdir(arch, CONF, LOG):
+    work_dir = CONF.get('default', 'work_dir')
     image_dir = os.path.join(work_dir, 'images')
     instance_dir = os.path.join(work_dir, 'instances')
     instance_record_file = os.path.join(instance_dir, 'instances.json')
@@ -119,7 +120,10 @@ def serve(host_arch, host_os, CONF, LOG):
             time.sleep(1)
 
 def init_launcherd(conf_file):
-    CONF = objs.Conf(conf_file)
+    CONF = configparser.ConfigParser()
+    if not os.path.exists(conf_file):
+        raise exceptions.NoSuchFile(file=conf_file)
+    CONF.read(conf_file)
 
     init_log(CONF)
     LOG = logging.getLogger(__name__)

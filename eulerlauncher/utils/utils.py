@@ -9,10 +9,6 @@ import uuid
 
 from google.protobuf.json_format import MessageToDict
 
-from eulerlauncher.utils import exceptions
-from eulerlauncher.utils import objs
-
-
 def asyncwrapper(fn):
     def wrapper(*args, **kwargs):
         thr = Thread(target=fn, args=args, kwargs=kwargs)
@@ -31,15 +27,6 @@ def response2dict(fn):
     return wrap
 
 
-def parse_config(args):
-    if len(args) != 2 or args[0] != '--config-file':
-        raise exceptions.NoConfigFileProvided
-    if not os.path.exists(args[1]):
-        raise exceptions.NoSuchFile(file=args[1])
-
-    return objs.Conf(args[1])
-
-
 def format_mac_addr(mac_str):
     ret = ''
     if len(mac_str) != 12:
@@ -51,23 +38,28 @@ def format_mac_addr(mac_str):
     
     return ret
 
+
 def load_json_data(json_file):
     with open(json_file, 'r', encoding='utf-8') as fr:
         data = json.load(fr)
         
     return data
 
+
 def save_json_data(json_file, data):
     with open(json_file, 'w', encoding='utf-8') as fw:
         json.dump(data, fw, indent=4, ensure_ascii=False)
+
 
 def load_xml_data(xml_file):
     data = etree.parse(xml_file)
     return data
 
+
 def save_xml_data(xml_file, data):
     with open(xml_file, 'wb') as fw:
         fw.write(etree.tostring(data, pretty_print=True, encoding='utf-8'))
+
 
 def generate_mac():
     local_mac = uuid.uuid1().hex[-12:]
@@ -79,17 +71,8 @@ def generate_mac():
 
     return (':'.join(s))
 
-def catch_exception(func):
 
-    def wrap(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception:
-            raise exceptions.OmniVirtdNotAvailable
-    
-    return wrap
-
-def check_file_tail(file_name, to_check):
+def check_format(file_name, to_check):
     
     ret = False
     ret_fmt = None

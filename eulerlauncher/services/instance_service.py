@@ -11,17 +11,18 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
     def __init__(self, host_arch, host_os, CONF, LOG) -> None:
         self.CONF = CONF
         self.LOG = LOG
-        self.work_dir = self.CONF.conf.get('default', 'work_dir')
+        self.work_dir = self.CONF.get('default', 'work_dir')
         self.instance_dir = os.path.join(self.work_dir, 'instances')
         self.instance_record_file = os.path.join(self.instance_dir, 'instances.json')
         self.image_dir = os.path.join(self.work_dir, 'images')
         self.image_record_file = os.path.join(self.image_dir, 'images.json')
         if host_os == 'Win':
-            from eulerlauncher.backends.win import instance_handler as win_instance_handler
-            self.backend = win_instance_handler.WinInstanceHandler(
-                self.CONF, self.work_dir, self.instance_dir, self.image_dir, self.LOG)
+            pass
+            # from eulerlauncher.backends.win import instance_handler as win_instance_handler
+            # self.backend = win_instance_handler.WinInstanceHandler(
+            #     self.CONF, self.work_dir, self.instance_dir, self.image_dir, self.LOG)
         elif host_os == 'MacOS':
-            from eulerlauncher.backends.mac import instance_handler as mac_instance_handler
+            from eulerlauncher.backends import instance_handler as mac_instance_handler
             self.backend = mac_instance_handler.MacInstanceHandler(
                 self.CONF, self.work_dir, self.instance_dir, self.image_dir, self.LOG)
 

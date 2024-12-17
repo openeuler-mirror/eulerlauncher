@@ -4,7 +4,6 @@ configparser
 dnspython
 grpcio
 grpcio-tools
-pkg-config
 lxml
 os-win
 oslo.concurrency
@@ -14,7 +13,7 @@ oslo.i18n
 oslo.log
 oslo.serialization
 oslo.utils
-pillow
+Pillow
 prettytable
 protobuf
 psutil
