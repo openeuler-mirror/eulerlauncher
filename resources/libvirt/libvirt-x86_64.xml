@@ -4,6 +4,7 @@
   <memory unit='MiB'></memory>
   <os>
     <type arch='x86_64' machine='pc'>hvm</type>
+    <bootmenu enable='yes' timeout='3000'/>
   </os>
 
   <devices>

@@ -1,26 +1,5 @@
-STORAGE_PROTOCOL_ISCSI = 'iscsi'
-STORAGE_PROTOCOL_FC = 'fibre_channel'
-STORAGE_PROTOCOL_SMBFS = 'smbfs'
-STORAGE_PROTOCOL_RBD = 'rbd'
-
-DISK = "VHD"
-
 IMAGE_LOCATION_REMOTE = 'Remote'
 IMAGE_LOCATION_LOCAL = 'Local'
-
-IMAGE_STATUS_INIT = 'N/A'
-IMAGE_STATUS_DOWLOADABLE = 'Downloadable'
-IMAGE_STATUS_DOWNLOADING = 'Downloading'
-IMAGE_STATUS_LOADING = 'Loading'
-IMAGE_STATUS_READY = 'Ready'
-
-IMAGE_LOAD_SUPPORTED_TYPES = ['qcow2.xz', 'qcow2']
-
-ARCH_MAP = {
-    'AMD64': 'x86_64',
-    'arm64': 'aarch64',
-    'x86_64': 'x86_64'
-}
 
 INSTANCE_STATE_MAP = {
     0: 'N/A',
@@ -32,6 +11,22 @@ INSTANCE_STATE_MAP = {
     6: 'Crashed',
     7: 'Suspended',
     99: 'N/A'
+}
+
+IMAGE_STATE_MAP = {
+    0: 'N/A',
+    1: 'Downloadable',
+    2: 'Downloading',
+    3: 'Loading',
+    4: 'Ready'
+}
+
+IMAGE_LOAD_SUPPORTED_TYPES = ['qcow2.xz', 'qcow2']
+
+ARCH_MAP = {
+    'AMD64': 'x86_64',
+    'arm64': 'aarch64',
+    'x86_64': 'x86_64'
 }
 
 OS_MAP = {

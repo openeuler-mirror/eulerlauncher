@@ -23,11 +23,14 @@ Homebrew是一款Mac OS平台下的软件包管理工具，拥有安装、卸载
 
 ### 安装Qemu及wget
 
-**EulerLauncher**在MacOS上运行依赖于`QEMU`，镜像下载依赖于`wget`，使用`Homebrew`可以非常方便的下载和管理此类软件，使用以下命令进行安装：
+**EulerLauncher**在MacOS上运行依赖于`QEMU`和`libvirt`，镜像下载依赖于`wget`，使用`Homebrew`可以非常方便的下载和管理此类软件，使用以下命令进行安装：
 
 ``` Shell
 brew install qemu
 brew install wget
+brew install libvirt
+brew tap jeffreywildman/homebrew-virt-manager
+brew install virt-viewer
 ```
 
 ### 配置sudo免密码权限
@@ -80,8 +83,9 @@ brew install wget
         [default]
         log_dir = # 日志文件位置(xxx.log)
         work_dir = # eulerlauncher工作目录，用于存储虚拟机镜像、虚拟机文件等
-        wget_dir = # wget的可执行文件路径，请参考上一步的内容进行配置
-        qemu_dir = # qemu的可执行文件路径，请参考上一步的内容进行配置
+        wget_bin = # wget的可执行文件路径，请参考上一步的内容进行配置
+        qemu_bin = # qemu的可执行文件路径，请参考上一步的内容进行配置
+        virt-viewer_dir = # virt-viewer的可执行文件路径，请参考上一步的内容进行配置
         debug = True
 
         [vm]
@@ -125,7 +129,7 @@ eulerlauncher images
 2. 下载远端镜像
 
 ```Shell
-eulerlauncher download-image 22.03-LTS
+eulerlauncher image download 22.03-LTS
 
 Downloading: 22.03-LTS, this might take a while, please check image status with "images" command.
 ```
@@ -133,7 +137,7 @@ Downloading: 22.03-LTS, this might take a while, please check image status with 
 镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态：
 
 ```Shell
-eulerlauncher images
+eulerlauncher image list
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -148,7 +152,7 @@ eulerlauncher images
 当镜像状态转变为 `Ready` 时，表示镜像下载完成，处于 `Ready` 状态的镜像可被用来创建虚拟机：
 
 ```Shell
-eulerlauncher images
+eulerlauncher image list
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -164,7 +168,7 @@ eulerlauncher images
 用户也可以加载自定义镜像或预先下载到本地的镜像到EulerLauncher中用于创建自定义虚拟机：
 
 ```Shell
-eulerlauncher load-image --path {image_file_path} IMAGE_NAME
+eulerlauncher image load --path {image_file_path} IMAGE_NAME
 ```
 
 当前支持加载的镜像格式有 `xxx.qcow2.xz`，`xxx.qcow2`
@@ -172,7 +176,7 @@ eulerlauncher load-image --path {image_file_path} IMAGE_NAME
 例如：
 
 ```Shell
-eulerlauncher load-image --path /opt/openEuler-22.03-LTS-x86_64.qcow2.xz 2203-load
+eulerlauncher image load --path /opt/openEuler-22.03-LTS-x86_64.qcow2.xz 2203-load
 
 Loading: 2203-load, this might take a while, please check image status with "images" command.
 ```
@@ -180,7 +184,7 @@ Loading: 2203-load, this might take a while, please check image status with "ima
 将位于 `/opt` 目录下的 `openEuler-22.03-LTS-x86_64.qcow2.xz` 加载到EulerLauncher系统中，并命名为 `2203-load`，与下载命令一样，加载命令也是一个异步命令，用户需要用镜像列表命令查询镜像状态直到显示为 `Ready`, 但相对于直接下载镜像，加载镜像的速度会快很多：
 
 ```Shell
-eulerlauncher images
+eulerlauncher image list
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -190,7 +194,7 @@ eulerlauncher images
 | 2203-load |  Local   |   Loading    |
 +-----------+----------+--------------+
 
-eulerlauncher images
+eulerlauncher image list
 
 +-----------+----------+--------------+
 |   Images  | Location |    Status    |
@@ -206,7 +210,7 @@ eulerlauncher images
 通过下面的命令将镜像从EulerLauncher系统中删除：
 
 ```Shell
-eulerlauncher delete-image 2203-load
+eulerlauncher image delete 2203-load
 
 Image: 2203-load has been successfully deleted.
 ```
@@ -216,7 +220,7 @@ Image: 2203-load has been successfully deleted.
 1. 获取虚拟机列表：
 
 ```shell
-eulerlauncher list
+eulerlauncher instance list
 
 +----------+-----------+---------+---------------+
 |   Name   |   Image   |  State  |       IP      |
@@ -236,21 +240,37 @@ eulerlauncher list
 ```Shell
 ssh root@{instance_ip}
 ```
+
 若使用的是openEuler社区提供的官方镜像，则默认用户为 `root` 默认密码为 `openEuler12#$`
 
 3. 创建虚拟机
 
 ```Shell
-eulerlauncher launch --image {image_name} {instance_name}
+eulerlauncher instance launch --image {image_name} {instance_name}
 ```
 
 通过 `--image` 指定镜像，同时指定虚拟机名称。
 
 4. 删除虚拟机
 ```Shell
-eulerlauncher delete-instance {instance_name}
+eulerlauncher instance delete {instance_name}
 ```
 根据虚拟机名称删除指定的虚拟机。
+
+5. 暂停虚拟机
+```Shell
+eulerlauncher instance suspend {instance_name}
+```
+
+6. 恢复虚拟机
+```Shell
+eulerlauncher instance resume {instance_name}
+```
+
+7. 虚拟机控制台
+```Shell
+eulerlauncher instance console {instance_name}
+```
 
 
 [1]: https://developer.apple.com/documentation/vmnet

@@ -80,6 +80,19 @@ def instance():
     pass
 
 
+@instance.command()
+@click.argument('vm_name')
+@click.option('--image', help='Image to build instance')
+def launch(vm_name, image):
+
+    try:
+        ret = launcher_client.create_instance(vm_name, image)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+
 # List all instances on the host
 @instance.command()
 def list():
@@ -117,13 +130,37 @@ def delete(name):
     else:
         print(ret['msg'])
 
+
 @instance.command()
-@click.argument('vm_name')
-@click.option('--image', help='Image to build instance')
-def launch(vm_name, image):
+@click.argument('name')
+def suspend(name):
 
     try:
-        ret = launcher_client.create_instance(vm_name, image)
+        ret = launcher_client.suspend_instance(name)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+
+@instance.command()
+@click.argument('name')
+def resume(name):
+
+    try:
+        ret = launcher_client.resume_instance(name)
+    except Exception:
+        print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
+    else:
+        print(ret['msg'])
+
+
+@instance.command()
+@click.argument('name')
+def console(name):
+
+    try:
+        ret = launcher_client.console_instance(name)
     except Exception:
         print('Calling to EulerLauncherd daemon failed, please check EulerLauncherd daemon status ...')
     else:

@@ -14,7 +14,7 @@ class ImageService(images_pb2_grpc.ImageGrpcServiceServicer):
         self.LOG = LOG
         self.work_dir = self.CONF.get('default', 'work_dir')
         self.image_dir = os.path.join(self.work_dir, 'images')
-        self.image_record_file = os.path.join(self.image_dir, 'images.json')
+        self.image_record_path = os.path.join(self.image_dir, 'images.json')
         if host_os == 'Win':
             pass
             # from eulerlauncher.backends.win import image_handler as win_image_handler

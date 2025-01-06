@@ -1,40 +1,21 @@
 import os
 import PIL.Image
-import platform
 import pystray
 import subprocess
 import signal
 import sys
-import configparser
-
-from eulerlauncher.utils import constants
-from eulerlauncher.utils import exceptions
 
 CONF_DIR_SHELL = '/Library/Application\ Support/org.openeuler.eulerlauncher/eulerlauncher.conf'
 CONF_DIR = '/Library/Application Support/org.openeuler.eulerlauncher/eulerlauncher.conf'
 
-# Avoid create zombie children in MacOS and Linux
-signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 if __name__ == '__main__':
     try:
-        host_arch_raw = platform.uname().machine
-        host_arch = constants.ARCH_MAP[host_arch_raw]
         base_dir = os.path.dirname(__file__)
-
-
-        conf_file = CONF_DIR
         logo_file = os.path.join(base_dir,'./etc/favicon.png')
-
-        CONF = configparser.ConfigParser()
-        if not os.path.exists(conf_file):
-            raise exceptions.NoSuchFile(file=conf_file)
-        CONF.read(conf_file)
-
         logo = PIL.Image.open(logo_file)
 
         def on_clicked(icon, item):
-            
             icon.stop()
         
         icon = pystray.Icon('EulerLauncher', logo, menu=pystray.Menu(
@@ -44,7 +25,8 @@ if __name__ == '__main__':
     except Exception as e:
         print('Error: ' + str(e))
     else:
-        launcherd_cmd = [os.path.join(base_dir,'./bin/eulerlauncherd'), CONF_DIR_SHELL]
+        launcherd_bin = os.path.join(base_dir,'./bin/eulerlauncherd')
+        launcherd_cmd = ['sudo', launcherd_bin, CONF_DIR_SHELL]
         launcherd = subprocess.Popen(' '.join(launcherd_cmd), shell=True, preexec_fn=os.setsid)
 
         def term_handler(signum, frame):

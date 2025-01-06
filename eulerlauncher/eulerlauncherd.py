@@ -12,7 +12,6 @@ import time
 import configparser
 from concurrent import futures
 
-
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
 from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2, instances_pb2_grpc
 from eulerlauncher.services import image_service, instance_service
@@ -30,6 +29,7 @@ if host_os_raw != 'Windows':
 
 parser = argparse.ArgumentParser()
 parser.add_argument('conf_file', help='Configuration file for the application', type=str)
+
 
 def init_log(CONF):
     log_dir = CONF.get('default', 'log_dir')
@@ -50,13 +50,13 @@ def init_log(CONF):
 
 
 def init_workdir(arch, CONF, LOG):
+    LOG.debug('Initializing work directory ...')
     work_dir = CONF.get('default', 'work_dir')
     image_dir = os.path.join(work_dir, 'images')
     instance_dir = os.path.join(work_dir, 'instances')
-    instance_record_file = os.path.join(instance_dir, 'instances.json')
-    image_record_file = os.path.join(image_dir, 'images.json')
+    instance_record_path = os.path.join(instance_dir, 'instances.json')
+    image_record_path = os.path.join(image_dir, 'images.json')
 
-    LOG.debug('Initializing EulerLauncherd ...')
     LOG.debug('Checking for work directory ...')
     if not os.path.exists(work_dir):
         LOG.debug('Create %s as working directory ...' % work_dir)
@@ -67,19 +67,19 @@ def init_workdir(arch, CONF, LOG):
         LOG.debug('Create %s as instance directory ...' % instance_dir)
         os.makedirs(instance_dir)
     LOG.debug('Checking for instance database ...')
-    if not os.path.exists(instance_record_file):
-        LOG.debug('Create %s as instance database ...' % instance_record_file)
+    if not os.path.exists(instance_record_path):
+        LOG.debug('Create %s as instance database ...' % instance_record_path)
         instances = {
         }
-        utils.save_json_data(instance_record_file, instances)
+        utils.save_json_data(instance_record_path, instances)
 
     LOG.debug('Checking for image directory ...')
     if not os.path.exists(image_dir):
         LOG.debug('Create %s as image directory ...' % image_dir)
         os.makedirs(image_dir)
     LOG.debug('Checking for image database ...')
-    if not os.path.exists(image_record_file):
-        LOG.debug('Create %s as image database ...' % image_record_file)
+    if not os.path.exists(image_record_path):
+        LOG.debug('Create %s as image database ...' % image_record_path)
         remote_image_resp = requests.get(IMG_URL, verify=False)
         remote_images = remote_image_resp.json()[arch]
         image_record = {
@@ -91,9 +91,10 @@ def init_workdir(arch, CONF, LOG):
                 'name': name,
                 'path': path,
                 'location': constants.IMAGE_LOCATION_REMOTE,
-                'status': constants.IMAGE_STATUS_DOWLOADABLE
+                'status': constants.IMAGE_STATE_MAP[1]
             }
-        utils.save_json_data(image_record_file, image_record)
+        utils.save_json_data(image_record_path, image_record)
+
 
 def serve(host_arch, host_os, CONF, LOG):
     '''
@@ -127,11 +128,11 @@ def init_launcherd(conf_file):
 
     init_log(CONF)
     LOG = logging.getLogger(__name__)
-
+    LOG.debug('Initializing EulerLauncherd ...')
+    
     host_arch_raw = platform.uname().machine
-    host_os_raw = platform.uname().system
-
     host_arch = constants.ARCH_MAP[host_arch_raw]
+    host_os_raw = platform.uname().system
     host_os = constants.OS_MAP[host_os_raw]
 
     init_workdir(host_arch, CONF, LOG)
@@ -169,4 +170,3 @@ if __name__ == '__main__':
         icon.run()
         server.stop(None)
         sys.exit(0)
-            

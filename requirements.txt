@@ -5,7 +5,6 @@ dnspython
 grpcio
 grpcio-tools
 lxml
-os-win
 oslo.concurrency
 oslo.config
 oslo.context
