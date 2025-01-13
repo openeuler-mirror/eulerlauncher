@@ -58,9 +58,15 @@ class MacInstanceHandler(object):
         utils.xml_find_and_set(xml, 'qemu:commandline/qemu:arg[2]', 'value', qemu_arg)
         utils.save_xml_data(xml_path, xml)
         
-        conn = libvirt.open("qemu:///system")
-        with open(xml_path, 'r') as pr:
-            dom = conn.createLinux(pr.read())
+        try:
+            conn = libvirt.open("qemu:///system")
+            with open(xml_path, 'r') as pr:
+                dom = conn.createLinux(pr.read())
+        except Exception:
+            self.LOG.debug(f'Libvirt error creating instance: {name}')
+            shutil.rmtree(instance_path)
+            return 3
+
 
         with open(os.path.join(instance_path, name), 'w') as pw:
             xml_dec = dom.XMLDesc()

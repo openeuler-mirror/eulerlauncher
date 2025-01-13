@@ -64,7 +64,7 @@ EulerLauncher可执行文件包括以下几个部分：
 
     项目源码中已包含用于构建EulerLauncher的Spec脚本`EulerLauncher-MacOS.spec`, 若非必要，请勿修改该文件，使用一下命令开始构建：
     ``` Shell
-    pyinstaller --clean --noconfirm specs/EulerLauncher-MacOS.spec
+    pyinstaller --clean --noconfirm specs/EulerLauncher-Mac.spec
     ```
 
 构建`eulerlauncher` CLI 及 `install` 脚本, cli与install之间有依赖关系，请严格按照下面的顺序进行构建:

@@ -51,6 +51,8 @@ class InstanceService(instances_pb2_grpc.InstanceGrpcServiceServicer):
             msg = f'Error: Image "{request.image}" is not available locally, please check again or (down)load it before using ...'
         elif ret == 2:
             msg = f'Error: Instance with name {request.name} already exist, please specify another name.'
+        elif ret == 3:
+            msg = f'Error: Libvirt error creating instance: {request.name}'
         return instances_pb2.CreateInstanceResponse(ret=ret, msg=msg)
     
 
