@@ -85,7 +85,7 @@ brew install virt-viewer
         work_dir = # eulerlauncher工作目录，用于存储虚拟机镜像、虚拟机文件等
         wget_bin = # wget的可执行文件路径，请参考上一步的内容进行配置
         qemu_bin = # qemu的可执行文件路径，请参考上一步的内容进行配置
-        virt-viewer_dir = # virt-viewer的可执行文件路径，请参考上一步的内容进行配置
+        virt-viewer_bin = # virt-viewer的可执行文件路径，请参考上一步的内容进行配置
         debug = True
 
         [vm]

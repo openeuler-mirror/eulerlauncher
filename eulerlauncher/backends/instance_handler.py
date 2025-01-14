@@ -62,31 +62,30 @@ class MacInstanceHandler(object):
             conn = libvirt.open("qemu:///system")
             with open(xml_path, 'r') as pr:
                 dom = conn.createLinux(pr.read())
+
+            with open(os.path.join(instance_path, name), 'w') as pw:
+                xml_dec = dom.XMLDesc()
+                pw.write(xml_dec)
+
+            ip_address = utils.parse_ip_address(mac_address)
+        
+            instance_record[name] = {
+                'id': dom.ID(),
+                'name': name,
+                'state': constants.INSTANCE_STATE_MAP[dom.state()[0]],
+                'vcpu': vcpu,
+                'ram': ram,
+                'image': image,
+                'mac_address': mac_address,
+                'ip_address': ip_address,
+                'path': instance_path
+            }
+            utils.save_json_data(self.instance_record_path, instance_record)
+            conn.close()
         except Exception:
             self.LOG.debug(f'Libvirt error creating instance: {name}')
             shutil.rmtree(instance_path)
             return 3
-
-
-        with open(os.path.join(instance_path, name), 'w') as pw:
-            xml_dec = dom.XMLDesc()
-            pw.write(xml_dec)
-
-        ip_address = utils.parse_ip_address(mac_address)
-    
-        instance_record[name] = {
-            'id': dom.ID(),
-            'name': name,
-            'state': constants.INSTANCE_STATE_MAP[dom.state()[0]],
-            'vcpu': vcpu,
-            'ram': ram,
-            'image': image,
-            'mac_address': mac_address,
-            'ip_address': ip_address,
-            'path': instance_path
-        }
-        utils.save_json_data(self.instance_record_path, instance_record)
-        conn.close()
         self.LOG.debug(f'Instance: {name} succesfully created ...')
         return 0
 

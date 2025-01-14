@@ -25,7 +25,7 @@ if __name__ == '__main__':
     except Exception as e:
         print('Error: ' + str(e))
     else:
-        launcherd_bin = os.path.join(base_dir,'./bin/eulerlauncherd')
+        launcherd_bin = os.path.join(base_dir, './bin/eulerlauncherd')
         launcherd_cmd = ['sudo', launcherd_bin, CONF_DIR_SHELL]
         launcherd = subprocess.Popen(' '.join(launcherd_cmd), shell=True, preexec_fn=os.setsid)
 
