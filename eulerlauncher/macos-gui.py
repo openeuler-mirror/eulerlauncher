@@ -2,6 +2,7 @@ import os
 import PIL.Image
 import pystray
 import subprocess
+import shutil
 import signal
 import sys
 
@@ -25,12 +26,24 @@ if __name__ == '__main__':
     except Exception as e:
         print('Error: ' + str(e))
     else:
+        os.environ['PATH'] += ':/opt/homebrew/bin:/opt/homebrew/sbin'
+        
+        libvirtd_bin = shutil.which('libvirtd')
+        libvirtd_cmd = ['sudo', libvirtd_bin]
+        libvirtd = subprocess.Popen(' '.join(libvirtd_cmd), shell=True, preexec_fn=os.setsid)
+
+        virtlogd_bin = shutil.which('virtlogd')
+        virtlogd_cmd = ['sudo', virtlogd_bin]
+        virtlogd = subprocess.Popen(' '.join(virtlogd_cmd), shell=True, preexec_fn=os.setsid)
+
         launcherd_bin = os.path.join(base_dir, './bin/eulerlauncherd')
         launcherd_cmd = ['sudo', launcherd_bin, CONF_DIR_SHELL]
         launcherd = subprocess.Popen(' '.join(launcherd_cmd), shell=True, preexec_fn=os.setsid)
 
         def term_handler(signum, frame):
             subprocess.check_call(['sudo', 'kill', str(launcherd.pid)])
+            subprocess.check_call(['sudo', 'kill', str(virtlogd.pid)])
+            subprocess.check_call(['sudo', 'kill', str(libvirtd.pid)])
 
         # Avoid create orphan children in MacOS and Linux
         signal.signal(signal.SIGTERM, term_handler)
@@ -40,4 +53,9 @@ if __name__ == '__main__':
         # Shutdown eulerlauncherd, we created it with sudo, so kill it with sudo
         subprocess.check_call(['sudo', 'kill', str(launcherd.pid)])
         os.waitpid(launcherd.pid, 0)
+        subprocess.check_call(['sudo', 'kill', str(virtlogd.pid)])
+        os.waitpid(virtlogd.pid, 0)
+        subprocess.check_call(['sudo', 'kill', str(libvirtd.pid)])
+        os.waitpid(libvirtd.pid, 0)
+
         sys.exit(0)

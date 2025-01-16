@@ -61,18 +61,6 @@ brew install virt-viewer
 
 2. 配置**EulerLauncher**：
 
-    - 查看`qemu`及`wget`所处位置，`qemu`二进制文件在不同架构下名称不同，请根据自身情况选择正确的名称(Apple Silicon: qemu-system-aarch64; Intel: qemu-system-x86_64)：
-        ``` Shell
-        which wget
-        which qemu-system-{host_arch}
-        ```
-        参考输出：
-        ```
-        /opt/homebrew/bin/wget
-        /opt/homebrew/bin/qemu-system-aarch64
-        ```
-        查看完成后，记录路径结果，在接下来的步骤中将会使用到。
-
     - 打开`eulerlauncher.conf`并进行配置：
         ``` Shell
         sudo vi /Library/Application\ Support/org.openeuler.eulerlauncher/eulerlauncher.conf
@@ -83,9 +71,6 @@ brew install virt-viewer
         [default]
         log_dir = # 日志文件位置(xxx.log)
         work_dir = # eulerlauncher工作目录，用于存储虚拟机镜像、虚拟机文件等
-        wget_bin = # wget的可执行文件路径，请参考上一步的内容进行配置
-        qemu_bin = # qemu的可执行文件路径，请参考上一步的内容进行配置
-        virt-viewer_bin = # virt-viewer的可执行文件路径，请参考上一步的内容进行配置
         debug = True
 
         [vm]

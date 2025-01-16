@@ -46,7 +46,7 @@ class MacInstanceHandler(object):
         xml = utils.load_xml_data(xml_path)
         vcpu = self.CONF.get('vm', 'cpu_num')
         ram = self.CONF.get('vm', 'memory')
-        qemu_bin = self.CONF.get('default', 'qemu_bin')
+        qemu_bin = shutil.which('qemu-system-aarch64')
         mac_address = utils.generate_mac_address()
 
         utils.xml_find_and_set(xml, 'name', value=name)
@@ -158,7 +158,7 @@ class MacInstanceHandler(object):
     #    address = utils.xml_find_and_set(xml, 'devices/graphics[@type="vnc"]/listen', "address")
     #    port = utils.xml_find_and_set(xml, 'devices/graphics[@type="vnc"]', "port")
         
-        virt_viewer_bin = self.CONF.get('default', 'virt-viewer_bin')
+        virt_viewer_bin = shutil.which('virt-viewer')
         virt_viewer_cmd = ['sudo', virt_viewer_bin, name]
         subprocess.Popen(' '.join(virt_viewer_cmd), shell=True, preexec_fn=os.setsid)
         

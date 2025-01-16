@@ -8,7 +8,7 @@ a = Analysis(
     ['../eulerlauncher/macos-gui.py'],
     pathex=[],
     binaries=[('../dist/eulerLauncherd', './bin')],
-    datas=[('../etc/eulerlauncher.conf', './etc'), ('../etc/images/favicon.png', './etc'), ('../resources/libvirt/libvirt-aarch64.xml', './etc'), ('../resources/libvirt/libvirt-x86_64.xml', './etc')],
+    datas=[('../etc/eulerlauncher.conf', './etc'), ('../etc/images/favicon.png', './etc'), ('../resources/libvirt/libvirt-aarch64.xml', './etc')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -19,6 +19,7 @@ a = Analysis(
     cipher=block_cipher,
     noarchive=False,
 )
+
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(
@@ -37,13 +38,14 @@ exe = EXE(
     runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
-    argv_emulation=False,
+    argv_emulation=True,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
     uac_admin=True,
     icon=['etc/images/favicon.ico'],
 )
+
 app = BUNDLE(
     exe,
     name='EulerLauncher.app',

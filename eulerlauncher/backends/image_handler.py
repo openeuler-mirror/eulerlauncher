@@ -50,7 +50,7 @@ class MacImageHandler(object):
                 'path': image_url
             }
             utils.save_json_data(self.image_record_path, image_record)
-            wget_bin = self.CONF.get('default', 'wget_bin')
+            wget_bin = shutil.which('wget_bin')
             download_cmd = [wget_bin, image_url,
                             '-O', image_path, 
                             '--no-check-certificate',
