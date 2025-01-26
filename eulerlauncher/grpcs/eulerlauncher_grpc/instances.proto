@@ -1,5 +1,5 @@
 syntax = "proto3";
-package omnivirt;
+package eulerlauncher;
 
 option cc_generic_services = true;
 
@@ -8,6 +8,9 @@ service InstanceGrpcService {
     rpc list_instances (ListInstancesRequest) returns (ListInstancesResponse) {}
     rpc create_instance (CreateInstanceRequest) returns (CreateInstanceResponse) {}
     rpc delete_instance (DeleteInstanceRequest) returns (DeleteInstanceResponse) {}
+    rpc suspend_instance (SuspendInstanceRequest) returns (SuspendInstanceResponse) {}
+    rpc resume_instance (ResumeInstanceRequest) returns (ResumeInstanceResponse) {}
+    rpc console_instance (ConsoleInstanceRequest) returns (ConsoleInstanceResponse) {}
 }
 
 
@@ -27,10 +30,12 @@ message ListInstancesResponse {
     repeated Instance instances = 1;
 }
 
+
 message CreateInstanceRequest {
     string name = 1;
     string image = 2;
 }
+
 
 message CreateInstanceResponse {
     uint32 ret = 1;
@@ -38,11 +43,46 @@ message CreateInstanceResponse {
     optional Instance instance = 3;
 }
 
+
 message DeleteInstanceRequest {
     string name = 1;
 }
 
+
 message DeleteInstanceResponse {
+    uint32 ret = 1;
+    string msg = 2;
+}
+
+
+message SuspendInstanceRequest {
+    string name = 1;
+}
+
+
+message SuspendInstanceResponse {
+    uint32 ret = 1;
+    string msg = 2;
+}
+
+
+message ResumeInstanceRequest {
+    string name = 1;
+}
+
+
+message ResumeInstanceResponse {
+    uint32 ret = 1;
+    string msg = 2;
+}
+
+
+message ConsoleInstanceRequest {
+    string name = 1;
+}
+
+
+message ConsoleInstanceResponse {
     uint32 ret = 1;
     string msg = 2;
 }

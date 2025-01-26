@@ -1,0 +1,103 @@
+<domain type='hvf' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+  <name></name>
+  <cpu mode='host-passthrough'></cpu>
+  <vcpu></vcpu>
+  <memory unit='MiB'></memory>
+  <os firmware='efi'>
+    <type arch='aarch64' machine='virt'>hvm</type>
+    <bootmenu enable='yes' timeout='3000'/>
+  </os>
+
+  <devices>
+
+    <emulator></emulator>
+
+    <controller type='pci' index='0' model='pcie-root'>
+      <alias name='pcie.0'/>
+    </controller>
+
+    <controller type='pci' index='1' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='1' port='0x8'/>
+      <alias name='pci.1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0' multifunction='on'/>
+    </controller>
+
+    <controller type='pci' index='2' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='2' port='0x8'/>
+      <alias name='pci.2'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x1'/>
+    </controller>
+
+    <controller type='pci' index='3' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='3' port='0x8'/>
+      <alias name='pci.3'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x2'/>
+    </controller>
+
+    <controller type='pci' index='4' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='4' port='0x8'/>
+      <alias name='pci.4'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x3'/>
+    </controller>
+
+    <controller type='pci' index='5' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='5' port='0x8'/>
+      <alias name='pci.5'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x4'/>
+    </controller>
+
+    <controller type='virtio-serial' index='0'>
+      <alias name='serial0'/>
+      <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
+    </controller>
+
+    <controller type='usb' index='1'>
+      <alias name='usb0'/>
+      <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
+    </controller>
+
+    <video>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
+      <alias name='video0'/>
+    </video>
+
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file=''/>
+      <target dev='sda' bus='virtio'/>
+      <alias name='disk0'/>
+      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </disk>
+
+    <input type='keyboard' bus='usb'>
+      <alias name='input0'/>
+    </input>
+
+    <input type='mouse' bus='usb'>
+      <alias name='input1'/>
+    </input>
+
+    <console type='pty'>
+      <target type='virtio'/>
+      <alias name='console0'/>
+    </console>
+
+    <graphics type='vnc'/>
+
+  </devices>
+
+  <qemu:commandline>
+    <qemu:arg value='-device'/>
+    <qemu:arg value=''/>
+    <qemu:arg value='-netdev'/>
+    <qemu:arg value='vmnet-shared,id=eth0'/>
+  </qemu:commandline>
+
+</domain>
+

@@ -4,9 +4,7 @@ configparser
 dnspython
 grpcio
 grpcio-tools
-pkg-config
 lxml
-os-win
 oslo.concurrency
 oslo.config
 oslo.context
@@ -23,3 +21,4 @@ PyYAML
 six
 urllib3
 wget
+libvirt-python

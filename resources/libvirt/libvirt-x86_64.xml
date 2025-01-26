@@ -1,0 +1,31 @@
+<domain type='qemu'>
+  <name></name>
+  <vcpu></vcpu>
+  <memory unit='MiB'></memory>
+  <os>
+    <type arch='x86_64' machine='pc'>hvm</type>
+    <bootmenu enable='yes' timeout='3000'/>
+  </os>
+
+  <devices>
+
+    <emulator></emulator>
+
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file=''/>
+      <target dev='hda' bus='virtio'/>
+    </disk>
+
+    <interface type='user'>
+      <mac address=''/>
+      <model type='virtio'/>
+    </interface>
+
+    <console type='pty'>
+        <target type='virtio' port='0'/>
+        <alias name='console0'/>
+    </console>
+
+  </devices>
+</domain>

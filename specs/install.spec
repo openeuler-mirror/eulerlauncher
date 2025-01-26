@@ -8,7 +8,7 @@ a = Analysis(
     ['../eulerlauncher/install.py'],
     pathex=[],
     binaries=[('../dist/eulerlauncher', './etc')],
-    datas=[('../etc/eulerlauncher.conf', './etc'), ('../resources/qemu/edk2-aarch64-code.fd', './etc'), ('../resources/qemu/edk2-x86_64-code.fd', './etc')],
+    datas=[('../etc/eulerlauncher.conf', './etc'), ('../resources/libvirt/libvirt-aarch64.xml', './etc'), ('../resources/libvirt/libvirt-x86_64.xml', './etc')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

@@ -1,16 +1,13 @@
 import functools
 import json
-import os
 import random
-from threading import Thread
 import uuid
-
+import subprocess
+import time
+from threading import Thread
+from lxml import etree
 
 from google.protobuf.json_format import MessageToDict
-
-from eulerlauncher.utils import exceptions
-from eulerlauncher.utils import objs
-
 
 def asyncwrapper(fn):
     def wrapper(*args, **kwargs):
@@ -30,57 +27,7 @@ def response2dict(fn):
     return wrap
 
 
-def parse_config(args):
-    if len(args) != 2 or args[0] != '--config-file':
-        raise exceptions.NoConfigFileProvided
-    if not os.path.exists(args[1]):
-        raise exceptions.NoSuchFile(file=args[1])
-
-    return objs.Conf(args[1])
-
-
-def format_mac_addr(mac_str):
-    ret = ''
-    if len(mac_str) != 12:
-        return ret
-    mac_low = mac_str.lower()
-    for i in range(0, 5):
-        ret = ret + mac_low[2 * i] + mac_low[2 * i + 1] + '-'
-    ret = ret + mac_low[-2] + mac_low[-1]
-    
-    return ret
-
-def load_json_data(json_file):
-    with open(json_file, 'r', encoding='utf-8') as fr:
-            data = json.load(fr)
-        
-    return data
-
-def save_json_data(json_file, data):
-    with open(json_file, 'w', encoding='utf-8') as fw:
-            json.dump(data, fw, indent=4, ensure_ascii=False)
-
-def generate_mac():
-    local_mac = uuid.uuid1().hex[-12:]
-
-    mac = [random.randint(0x00, 0xff), random.randint(0x00, 0xff)]
-    s = [local_mac[0:2], local_mac[2:4], local_mac[4:6], local_mac[6:8]]
-    for item in mac:
-        s.append(str("%02x" % item))
-
-    return (':'.join(s))
-
-def catch_exception(func):
-
-    def wrap(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception:
-            raise exceptions.OmniVirtdNotAvailable
-    
-    return wrap
-
-def check_file_tail(file_name, to_check):
+def check_format(file_name, to_check):
     
     ret = False
     ret_fmt = None
@@ -92,3 +39,81 @@ def check_file_tail(file_name, to_check):
             break
     
     return ret, ret_fmt
+
+
+def load_json_data(json_file):
+    with open(json_file, 'r', encoding='utf-8') as fr:
+        data = json.load(fr)
+        
+    return data
+
+
+def xml_find_and_set(xml, xpath, attribute=None, value=None):
+    namespaces = xml.getroot().nsmap
+    elements = xml.xpath(xpath, namespaces=namespaces)
+    if attribute is not None:
+        if value is not None:
+            elements[0].set(attribute, value)
+        return elements[0].get(attribute)
+    else:
+        if value is not None:
+            elements[0].text = value
+        return elements[0].text
+    
+
+def save_json_data(json_file, data):
+    with open(json_file, 'w', encoding='utf-8') as fw:
+        json.dump(data, fw, indent=4, ensure_ascii=False)
+
+
+def load_xml_data(xml_file):
+    data = etree.parse(xml_file)
+    return data
+
+
+def save_xml_data(xml_file, data):
+    with open(xml_file, 'wb') as fw:
+        fw.write(etree.tostring(data, pretty_print=True, encoding='utf-8'))
+
+
+def generate_mac_address():
+    local_mac = uuid.uuid1().hex[-12:]
+
+    mac = [random.randint(0x00, 0xff), random.randint(0x00, 0xff)]
+    s = [local_mac[0:2], local_mac[2:4], local_mac[4:6], local_mac[6:8]]
+    for item in mac:
+        s.append(str("%02x" % item))
+
+    return (':'.join(s))
+
+
+def parse_ip_address(mac_address):
+    ip_address = ''
+    cmd = 'arp -a'
+    start_time = time.time()
+    while(ip_address == '' and time.time() - start_time < 20):
+        pr = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+        arp_result = pr.stdout.decode('utf-8').split('\n')
+        founded = False
+        for str in arp_result:
+            # The result for 'arp -a' in MacOS is different with Linux, it erase
+            # the first 0 if the first digit is 0 for this mac section, add it
+            # back before compare
+            try:
+                arp_ip = str.split(' ')[1].replace("(", "").replace(")", "")
+                mac = str.split(' ')[3].replace("(", "").replace(")", "")
+            except IndexError:
+                continue
+            mac_list = mac.split(':')
+            for i in range(0, len(mac_list)):
+                if len(mac_list[i]) == 1:
+                    mac_list[i] = '0' + mac_list[i]
+            mac_0 = ':'.join(mac_list)
+            if mac_address == mac_0:
+                ip_address = arp_ip
+                founded = True
+                break
+        if founded:
+            break
+    
+    return ip_address

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package omnivirt;
+package eulerlauncher;
 
 option cc_generic_services = true;
 
@@ -27,18 +27,22 @@ message ListImageResponse {
     repeated Image images = 1;
 }
 
+
 message DownloadImageRequest {
     string name = 1;
 }
+
 
 message LoadImageRequest {
     string name = 1;
     string path = 2;
 }
 
+
 message DeleteImageRequest {
     string name = 1;
 }
+
 
 message GeneralImageResponse {
     uint32 ret = 1;

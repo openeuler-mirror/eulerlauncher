@@ -1,11 +1,9 @@
 import grpc
-import os
 
 from eulerlauncher.grpcs.eulerlauncher_grpc import images_pb2, images_pb2_grpc
 from eulerlauncher.grpcs.eulerlauncher_grpc import instances_pb2, instances_pb2_grpc
 from eulerlauncher.grpcs import images, instances
-from eulerlauncher.utils import constants
-from eulerlauncher.utils import utils as omnivirt_utils
+from eulerlauncher.utils import utils
 
 
 class Client(object):
@@ -20,7 +18,8 @@ class Client(object):
         self._images = images.Image(images_client)
         self._instances = instances.Instance(instances_client)
 
-    @omnivirt_utils.response2dict
+
+    @utils.response2dict
     def list_images(self, filters=None):
         """ [IMAGE] List images
 
@@ -30,48 +29,32 @@ class Client(object):
 
         return self._images.list()
     
-    @omnivirt_utils.response2dict
+
+    @utils.response2dict
     def download_image(self, name):
         """ Download image
         """
 
         return self._images.download(name)
 
-    @omnivirt_utils.response2dict
+
+    @utils.response2dict
     def load_image(self, name, path):
         """ Load local image file
         """
         
-        if not os.path.exists(path):
-            err_msg = {
-                'ret': 1,
-                'msg': f'No such file or directory: {path}, please check again.'
-            }
-            return err_msg
-        
-        supported = False
-        for tp in constants.IMAGE_LOAD_SUPPORTED_TYPES:
-            if path.endswith(tp):
-                supported = True
-                break
-        
-        if not supported:
-            err_msg = {
-                'ret': 1,
-                'msg': f'Image file format does not supported: {path}, please check again.'
-            }
-            return err_msg
-        
         return self._images.load(name, path)
 
-    @omnivirt_utils.response2dict
+
+    @utils.response2dict
     def delete_image(self, name):
         """ Delete the requested image
         """
 
         return self._images.delete(name)
 
-    @omnivirt_utils.response2dict
+
+    @utils.response2dict
     def list_instances(self):
         """ List instances
         :return: dict -- list of instances' info
@@ -79,7 +62,8 @@ class Client(object):
 
         return self._instances.list()
 
-    @omnivirt_utils.response2dict
+
+    @utils.response2dict
     def create_instance(self, name, image):
         """ Create instance
         :return: dict -- dict of instance's info
@@ -87,9 +71,32 @@ class Client(object):
 
         return self._instances.create(name, image)
 
-    @omnivirt_utils.response2dict
+
+    @utils.response2dict
     def delete_instance(self, name):
         """ Delete the requested instance
         """
 
         return self._instances.delete(name)
+    
+    @utils.response2dict
+    def suspend_instance(self, name):
+        """ Suspend the requested instance
+        """
+
+        return self._instances.suspend(name)
+    
+    @utils.response2dict
+    def resume_instance(self, name):
+        """ Resume the requested instance
+        """
+
+        return self._instances.resume(name)
+
+
+    @utils.response2dict
+    def console_instance(self, name):
+        """ connect the requested instance
+        """
+
+        return self._instances.console(name)
