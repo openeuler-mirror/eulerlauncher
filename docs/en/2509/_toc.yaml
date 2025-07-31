@@ -1,0 +1,11 @@
+label: EulerLauncher User Guide
+isManual: true
+description: High-performance development resources on mainstream desktop OSs.
+sections:
+  - label: Overview
+    href: ./overall.md
+  - label: Installing and Running EulerLauncher on Windows
+    href: ./win_user_manual.md
+  - label: Installing and Running EulerLauncher on macOS
+    href: ./mac_user_manual.md
+
