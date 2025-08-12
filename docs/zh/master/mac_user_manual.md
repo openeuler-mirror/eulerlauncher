@@ -37,10 +37,15 @@ brew install wget
 **EulerLauncher**在MacOS上运行依赖于`QEMU`，为了使用户的网络体验更加优秀，因此采用了MacOS的[vmnet framework][1]来提供虚拟机的网络能力，当前`vmnet`使用时需要使用管理员权限，因此在使用`QEMU`后端创建带有`vmnet`类型网络设备的虚拟机时，需要启用管理员权限，EulerLauncher在启动时会自动使用`sudo`命令来实现这一过程，因此需要为当前用户配置`sudo`免密码使用权限，如您介意此配置，请停止使用EulerLauncher。
 
 1. 在MacOS桌面下敲击 `command` + `shift` + `u` 组合键，打开`访达`中的`实用工具`，并找到`终端.app`
+
 <img src="./images/mac-terminal.jpg" width='60%' height='60%'/>
+
 2. 在终端中输入`sudo visudo`修改sudo配置文件，注意，此步骤有可能要求输入密码，请按指示输入密码。
+
 3. 找到并将`%admin ALL=(ALL) ALL`替换为 `%admin ALL=(ALL) NOPASSWD: ALL`
+
 <img src="./images/mac-visudo.jpg" width='70%' height='70%'/>
+
 4. 敲击`ESC`，再输入`:WQ`进行保存
 
 ## 安装EulerLauncher
@@ -122,7 +127,6 @@ brew install wget
 
 1. 获取可用镜像列表：
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher images
 > +-----------+----------+--------------+
@@ -134,26 +138,22 @@ brew install wget
 > +-----------+----------+--------------+
 > ```
 
-> ***GUI客户端***
 > 左边栏选择`镜像管理`，右边下方点击`刷新`，即可获取可用镜像列表，内容包括镜像名称、位置、状态等信息。
 
 **EulerLauncher**镜像有两种位置属性：1）远端镜像 2）本地镜像，只有处于本地且状态为 `Ready` 的镜像可以直接用来创建虚拟机，位于远端的镜像需要下载后才能够使用；你也可以加载已经预先下载好的本地镜像到**EulerLauncher**中，具体操作方法可以参考接下来的操作指导。
 
 2. 下载远端镜像
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher download-image 22.03-LTS
 > 
 > Downloading: 22.03-LTS, this might take a while, please check image status with "images" command.
 > ```
 
-> ***GUI客户端***
 > 左边栏选择`镜像管理`，右边列表中选中要下载的镜像，然后在右边下方点击`下载`，即可开始下载镜像，下载过程中点击`刷新`按钮可以查看当前状态。
 
 镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态，进度条格式为`([downloaded_bytes] [percentage] [download_speed] [remaining_download_time])`：
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher images
 > 
@@ -166,12 +166,10 @@ brew install wget
 > +-----------+----------+------------------------------------+
 > ```
 
-> ***GUI客户端***
 > 点击`刷新`按钮查看当前状态，列表中也会显示上面的三列。
 
 当镜像状态转变为 `Ready` 时，表示镜像下载完成，处于 `Ready` 状态的镜像可被用来创建虚拟机：
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher images
 > 
@@ -184,26 +182,22 @@ brew install wget
 > +-----------+----------+--------------+
 > ```
 
-> ***GUI客户端***
 > 点击`刷新`按钮查看当前状态，列表中也会显示上面的三列，最后一个值为`Ready`时说明下载完成。
 
 3. 加载本地镜像
 
 用户也可以加载自定义镜像或预先下载到本地的镜像到EulerLauncher中用于创建自定义虚拟机：
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher load-image --path {image_file_path} IMAGE_NAME
 > ```
 
-> ***GUI客户端***
 > 左边栏选择`镜像管理`，右边下方点击`加载本地镜像`，会弹出文件选择窗口，按照弹出窗口的引导选择本地镜像文件，输入镜像名称，即可完成加载。
 
 当前支持加载的镜像格式有 `xxx.{qcow2, raw, vmdk, vhd, vhdx, qcow, vdi}.[xz]`
 
 例如：
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher load-image --path /opt/openEuler-22.03-LTS-x86_64.qcow2.xz 2203-load
 > 
@@ -234,12 +228,10 @@ brew install wget
 > +-----------+----------+--------------+
 > ```
 
-> ***GUI客户端***
 > 同样以上面的例子为例，点击`加载本地镜像`，在文件选择窗口内选择`/opt/openEuler-22.03-LTS-x86_64.qcow2.xz`，镜像名称输入`2203-load`，点击`确定`，即可完成加载。获取加载情况请点击`刷新`按钮查看。
 
 4. 删除镜像：
 
-> ***CLI客户端***
 > 通过下面的命令将镜像从EulerLauncher系统中删除：
 
 > ```Shell
@@ -248,14 +240,12 @@ brew install wget
 > Image: 2203-load has been successfully deleted.
 > ```
 
-> ***GUI客户端***
 > 左边栏选择`镜像管理`，右边列表中选中要删除的镜像，然后在右边下方点击`删除镜像`，即可删除镜像。
 
 ### 虚拟机操作
 
 1. 获取虚拟机列表：
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher list
 > 
@@ -268,21 +258,18 @@ brew install wget
 > +----------+-----------+---------+---------------+
 > ```
 
-> ***GUI客户端***
 > 左边栏选择`虚拟机管理`，右边上方点击`刷新`，即可获取虚拟机列表，内容包括虚拟机名称、镜像、状态、IP等信息。
 
 若虚拟机IP地址显示为 `N/A` ，若这台虚拟机的状态为 `Running` 则表示这台虚拟机为新创建的虚拟机，网络还未配置完成，网络配置过程大概需要若干秒，请稍后重新尝试获取相关虚拟机信息。
 
 2. 登录虚拟机：
 
-> ***CLI客户端*** 
 > 若虚拟机已成功分配到IP地址，可以直接使用 `SSH` 命令进行登录：
 
 > ```Shell
 > ssh root@{instance_ip}
 > ```
 
-> ***GUI客户端***
 > 左边栏选择`虚拟机管理`，右边列表中选中要登录的虚拟机，然后在右边下方点击`连接`，界面会自动跳转到`虚拟机连接`。`虚拟机连接`界面上方左侧会显示虚拟机的各种信息，上方右侧有三个按钮，提供两种SSH连接方式。
 > - 选择`调用终端进行SSH连接`，则会调用系统终端进行SSH连接，会自动弹出终端窗口，在里面操作即可，关闭终端窗口即可断开连接（最好先输入exit指令）。
 > - 选择`在GUI中进行SSH连接`，如果使用导入的镜像则需要在弹出窗口中输入密码，连接成功则会在界面下方的文本框内显示信息，在输入栏中输入命令后按输入条右侧的`Send`或者按键盘上的`Enter`键即可发送命令。要断开连接，可以点击上方右侧的`断开连接`按钮，或者在输入栏中输入`exit`命令，还可以在左边栏直接切换到其他页面（不推荐），这三种方式均可断开连接。
@@ -291,46 +278,38 @@ brew install wget
 
 3. 创建虚拟机
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher launch --image {image_name} {instance_name}
 > ```
 > 通过 `--image` 指定镜像，同时指定虚拟机名称，EulerLauncher会根据所指定的镜像默认创建一个规格为`2U4G`的openEuler虚拟机。
 
-> ***GUI客户端***
 > 左边栏选择`虚拟机管理`，右边下方点击`创建虚拟机`，弹出窗口中选择镜像，输入虚拟机名称，点击`确定`，即可创建虚拟机，创建过程中请耐心等待`请等待`弹窗消失。
 
 4. 删除虚拟机
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher delete-instance {instance_name}
 > ```
 > 根据虚拟机名称删除指定的虚拟机。
 
-> ***GUI客户端***
 > 左边栏选择`虚拟机管理`，右边列表中选中要删除的虚拟机，然后在右边下方点击`删除虚拟机`，即可删除虚拟机。
 
 5. 为虚拟机打快照，并导出为镜像
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher take-snapshot --snapshot_name snap --export_path path vm_name
 > ```
 > 通过`--snapshot_name`指定快照名称，`--export_path`指定导出镜像存放位置，`vm_name`为虚拟机名。
 
-> ***GUI客户端***
 > 左边栏选择`虚拟机管理`，右边列表中选中要打快照的虚拟机，然后在右边下方点击`生成快照`，弹出窗口中选择文件存放位置，输入快照名称，点击`确定`，即可完成快照，其会存放在选择的路径下。
 
 6. 将虚拟机导出为主流编程框架开发镜像
 
-> ***CLI客户端***
 > ```Shell
 > eulerlauncher export-development-image --image_name image --export_path path vm_name
 > ```
 > 通过`--image_name`指定导出镜像名称，`--export_path`指定导出镜像存放位置，`vm_name`为虚拟机名，默认导出为Python/Go/Java主流编程框架开发镜像。
 
-> ***GUI客户端***
 > 左边栏选择`虚拟机管理`，右边列表中选中要导出的虚拟机，然后在右边下方点击`导出为开发镜像`，弹出窗口中选择文件存放位置，输入镜像名称，点击`确定`，即可完成导出，其会存放在选择的路径下。
 
 [1]: https://developer.apple.com/documentation/vmnet
