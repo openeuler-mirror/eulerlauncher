@@ -38,13 +38,13 @@ brew install wget
 
 1. 在MacOS桌面下敲击 `command` + `shift` + `u` 组合键，打开`访达`中的`实用工具`，并找到`终端.app`
 
-<img src="./images/mac-terminal.jpg" width='60%' height='60%'/>
+    <img src="./images/mac-terminal.jpg" width='60%' height='60%'/>
 
 2. 在终端中输入`sudo visudo`修改sudo配置文件，注意，此步骤有可能要求输入密码，请按指示输入密码。
 
 3. 找到并将`%admin ALL=(ALL) ALL`替换为 `%admin ALL=(ALL) NOPASSWD: ALL`
 
-<img src="./images/mac-visudo.jpg" width='70%' height='70%'/>
+    <img src="./images/mac-visudo.jpg" width='70%' height='70%'/>
 
 4. 敲击`ESC`，再输入`:WQ`进行保存
 
@@ -292,7 +292,7 @@ brew install wget
 
 2. 登录虚拟机：
 
-CLI客户端
+    CLI客户端
 
     若虚拟机已成功分配到IP地址，可以直接使用 `SSH` 命令进行登录：
 
@@ -310,7 +310,7 @@ CLI客户端
 
 3. 创建虚拟机
 
-CLI客户端
+    CLI客户端
 
     > ```Shell
     > eulerlauncher launch --image {image_name} {instance_name}
@@ -349,7 +349,7 @@ CLI客户端
 
 6. 将虚拟机导出为主流编程框架开发镜像
 
-CLI客户端
+    CLI客户端
 
     > ```Shell
     > eulerlauncher export-development-image --image_name image --export_path path vm_name
