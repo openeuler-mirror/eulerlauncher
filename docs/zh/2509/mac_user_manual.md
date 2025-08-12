@@ -7,7 +7,7 @@
 Homebrew是一款Mac OS平台下的软件包管理工具，拥有安装、卸载、更新、查看、搜索等很多实用的功能。简单的一条指令，就可以实现包管理，而不用你关心各种依赖和文件路径的情况，十分方便快捷。
 
 在MacOS桌面下敲击 `command` + `shift` + `u` 组合键，打开`访达`中的`实用工具`，并找到`终端.app`
-<img src="./images/mac-terminal.jpg" width='60%' hight='60%'/>
+<img src="./images/mac-terminal.jpg" width='60%' height='60%'/>
 
 并根据网络情况输入以下命令进行安装
 
@@ -35,12 +35,12 @@ brew install wget
 **EulerLauncher**在MacOS上运行依赖于`QEMU`，为了使用户的网络体验更加优秀，因此采用了MacOS的[vmnet framework][1]来提供虚拟机的网络能力，当前`vmnet`使用时需要使用管理员权限，因此在使用`QEMU`后端创建带有`vmnet`类型网络设备的虚拟机时，需要启用管理员权限，EulerLauncher在启动时会自动使用`sudo`命令来实现这一过程，因此需要为当前用户配置`sudo`免密码使用权限，如您介意此配置，请停止使用EulerLauncher。
 
 1. 在MacOS桌面下敲击 `command` + `shift` + `u` 组合键，打开`访达`中的`实用工具`，并找到`终端.app`
-<img src="./images/mac-terminal.jpg" width='60%' hight='60%'/>
+<img src="./images/mac-terminal.jpg" width='60%' height='60%'/>
 
 2. 在终端中输入`sudo visudo`修改sudo配置文件，注意，此步骤有可能要求输入密码，请按指示输入密码。
 
 3. 找到并将`%admin ALL=(ALL) ALL`替换为 `%admin ALL=(ALL) NOPASSWD: ALL`
-<img src="./images/mac-visudo.jpg" width='70%' hight='70%'/>
+<img src="./images/mac-visudo.jpg" width='70%' height='70%'/>
 
 4. 敲击`ESC`，再输入`:WQ`进行保存
 
@@ -50,14 +50,13 @@ brew install wget
 
 解压后的目录包含以下文件：
 
-<img src="./images/mac-content.jpg" width='30%' hight='30%'/>  <img src="./images/mac-GUIcontent.png" width='17%' hight='17%'/>
+<img src="./images/mac-content.jpg" width='30%' height='30%'/>  <img src="./images/mac-GUIcontent.png" width='17%' height='17%'/>
 
 其中`install`可执行文件为安装文件，用于将**EulerLauncher**所需支持文件安装到指定位置，`EulerLauncher.dmg`为主程序的磁盘映象。
 
 如果要安装GUI的话，还需要用到`eulerlauncherGUI.dmg`。
 
 1. 安装支持文件(本操作需要sudo权限，请先完成前面的步骤)：双击`install`可执行文件，等待程序完成执行。
-
 2. 配置**EulerLauncher**：
 
     - 查看`qemu`,`qemu-img`及`wget`所处位置，`qemu`二进制文件在不同架构下名称不同，请根据自身情况选择正确的名称(Apple Silicon: qemu-system-aarch64; Intel: qemu-system-x86_64)：
@@ -93,27 +92,23 @@ brew install wget
         cpu_num = 1 # 配置虚拟机的CPU个数
         memory = 1024 # 配置虚拟机的内存大小，单位为M，M1用户请勿配置超过2048
         ```
-
 3. 安装**EulerLauncher.app**:
 
     - 双击`EulerLauncher.dmg`，在弹出的窗口中用鼠标将`EulerLauncher.app`拖动到`Applications`中，即可完成安装，并可在应用程序中找到`EulerLauncher.app`
 
-        <img src="./images/mac-install.jpg" width='40%' hight='40%'/>
-
+        <img src="./images/mac-install.jpg" width='40%' height='40%'/>
 4. 安装**eulerlauncherGUI.app**（选装）：
 
     - 参考上一步，双击`eulerlauncherGUI.dmg`，在弹出的窗口中用鼠标将`eulerlauncherGUI.app`拖动到`Applications`中，即可完成安装，并可在应用程序中找到`eulerlauncherGUI.app`
 
-        <img src="./images/mac-GUIinstall.png" width='40%' hight='40%'/>
+        <img src="./images/mac-GUIinstall.png" width='40%' height='40%'/>
 
 ## 使用EulerLauncher
 
 1. 在应用程序中找到`EulerLauncher.app`，单击启动程序。
-
 2. EulerLauncher需要访问网络，在弹出如下窗口时点击`允许`:
 
-    <img src="./images/mac-start.jpg" width='30%' hight='30%'/>
-
+    <img src="./images/mac-start.jpg" width='30%' height='30%'/>
 3. EulerLauncher当前支持命令行方式和使用GUI进行访问，请打开`终端.app`或者`eulerlauncherGUI.app`，进行操作。
 
 ### 镜像操作
@@ -149,7 +144,6 @@ brew install wget
 > ***GUI客户端***
 > 
 > 左边栏选择`镜像管理`，右边列表中选中要下载的镜像，然后在右边下方点击`下载`，即可开始下载镜像，下载过程中点击`刷新`按钮可以查看当前状态。
-
 
 镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态，进度条格式为`([downloaded_bytes] [percentage] [download_speed] [remaining_download_time])`：
 
@@ -202,7 +196,6 @@ brew install wget
 > 
 > 左边栏选择`镜像管理`，右边下方点击`加载本地镜像`，会弹出文件选择窗口，按照弹出窗口的引导选择本地镜像文件，输入镜像名称，即可完成加载。
 
-
 当前支持加载的镜像格式有 `xxx.{qcow2, raw, vmdk, vhd, vhdx, qcow, vdi}.[xz]`
 
 例如：
@@ -240,7 +233,6 @@ brew install wget
 > ***GUI客户端***
 > 
 > 同样以上面的例子为例，点击`加载本地镜像`，在文件选择窗口内选择`/opt/openEuler-22.03-LTS-x86_64.qcow2.xz`，镜像名称输入`2203-load`，点击`确定`，即可完成加载。获取加载情况请点击`刷新`按钮查看。 
-
 
 4. 删除镜像：
 
