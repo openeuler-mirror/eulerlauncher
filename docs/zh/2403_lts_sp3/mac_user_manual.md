@@ -101,7 +101,7 @@ brew install wget
 
         完成编辑后保存退出。
 
-3. 安装**EulerLauncher.app**:
+4. 安装**EulerLauncher.app**:
 
     双击`EulerLauncher.dmg`，在弹出的窗口中用鼠标将`EulerLauncher.app`拖动到`Applications`中，即可完成安装，并可在应用程序中找到`EulerLauncher.app`。
 
@@ -121,121 +121,121 @@ brew install wget
 
 1. 获取可用镜像列表：
 
-```Shell
+    ```Shell
 
-eulerlauncher images
+    eulerlauncher images
 
-```
+    ```
 
-**EulerLauncher**镜像有两种位置属性：1）远端镜像 2）本地镜像，只有处于本地且状态为 `Ready` 的镜像可以直接用来创建虚拟机，位于远端的镜像需要下载后才能够使用；你也可以加载已经预先下载好的本地镜像到**EulerLauncher**中，具体操作方法可以参考接下来的操作指导。
+    **EulerLauncher**镜像有两种位置属性：1）远端镜像 2）本地镜像，只有处于本地且状态为 `Ready` 的镜像可以直接用来创建虚拟机，位于远端的镜像需要下载后才能够使用；你也可以加载已经预先下载好的本地镜像到**EulerLauncher**中，具体操作方法可以参考接下来的操作指导。
 
 2. 下载远端镜像。
 
-```Shell
-eulerlauncher download-image 23.09
+    ```Shell
+    eulerlauncher download-image 23.09
 
-Downloading: 23.09, this might take a while, please check image status with "images" command.
-```
+    Downloading: 23.09, this might take a while, please check image status with "images" command.
+    ```
 
-镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态：
+    镜像下载请求是一个异步请求，具体的下载动作将在后台完成，具体耗时与你的网络情况相关，整体的镜像下载流程包括下载、解压缩、格式转换等相关子流程，在下载过程中可以通过 `image` 命令随时查看下载进展与镜像状态：
 
-```Shell
+    ```Shell
 
-eulerlauncher images
+    eulerlauncher images
 
-```
+    ```
 
-当镜像状态转变为 `Ready` 时，表示镜像下载完成，处于 `Ready` 状态的镜像可被用来创建虚拟机：
+    当镜像状态转变为 `Ready` 时，表示镜像下载完成，处于 `Ready` 状态的镜像可被用来创建虚拟机：
 
-```Shell
+    ```Shell
 
-eulerlauncher images
+    eulerlauncher images
 
-```
+    ```
 
 3. 加载本地镜像。
 
-用户也可以加载自定义镜像或预先下载到本地的镜像到EulerLauncher中用于创建自定义虚拟机：
+    用户也可以加载自定义镜像或预先下载到本地的镜像到EulerLauncher中用于创建自定义虚拟机：
 
-```Shell
-eulerlauncher load-image --path {image_file_path} IMAGE_NAME
-```
+    ```Shell
+    eulerlauncher load-image --path {image_file_path} IMAGE_NAME
+    ```
 
-当前支持加载的镜像格式有 `xxx.qcow2.xz`，`xxx.qcow2`。
+    当前支持加载的镜像格式有 `xxx.qcow2.xz`，`xxx.qcow2`。
 
-例如：
+    例如：
 
-```Shell
-eulerlauncher load-image --path /opt/openEuler-23.09-x86_64.qcow2.xz 2309-load
+    ```Shell
+    eulerlauncher load-image --path /opt/openEuler-23.09-x86_64.qcow2.xz 2309-load
 
-Loading: 2309-load, this might take a while, please check image status with "images" command.
-```
+    Loading: 2309-load, this might take a while, please check image status with "images" command.
+    ```
 
-将位于 `/opt` 目录下的 `openEuler-23.09-x86_64.qcow2.xz` 加载到EulerLauncher系统中，并命名为 `2309-load`，与下载命令一样，加载命令也是一个异步命令，用户需要用镜像列表命令查询镜像状态直到显示为 `Ready`, 但相对于直接下载镜像，加载镜像的速度会快很多：
+    将位于 `/opt` 目录下的 `openEuler-23.09-x86_64.qcow2.xz` 加载到EulerLauncher系统中，并命名为 `2309-load`，与下载命令一样，加载命令也是一个异步命令，用户需要用镜像列表命令查询镜像状态直到显示为 `Ready`, 但相对于直接下载镜像，加载镜像的速度会快很多：
 
-```Shell
-eulerlauncher images
+    ```Shell
+    eulerlauncher images
 
-......
+    ......
 
-eulerlauncher images
+    eulerlauncher images
 
-......
+    ......
 
-```
+    ```
 
 4. 删除镜像：
 
-通过下面的命令将镜像从EulerLauncher系统中删除：
+    通过下面的命令将镜像从EulerLauncher系统中删除：
 
-```Shell
-eulerlauncher delete-image 2309-load
+    ```Shell
+    eulerlauncher delete-image 2309-load
 
-Image: 2309-load has been successfully deleted.
-```
+    Image: 2309-load has been successfully deleted.
+    ```
 
 ### 虚拟机操作
 
 1. 获取虚拟机列表：
 
-```shell
-eulerlauncher list
+    ```shell
+    eulerlauncher list
 
-+----------+-----------+---------+---------------+
-|   Name   |   Image   |  State  |       IP      |
-+----------+-----------+---------+---------------+
-|   test1  | 2309-load | Running | 172.22.57.220 |
-+----------+-----------+---------+---------------+
-|   test2  | 2309-load | Running |      N/A      |
-+----------+-----------+---------+---------------+
-```
+    +----------+-----------+---------+---------------+
+    |   Name   |   Image   |  State  |       IP      |
+    +----------+-----------+---------+---------------+
+    |   test1  | 2309-load | Running | 172.22.57.220 |
+    +----------+-----------+---------+---------------+
+    |   test2  | 2309-load | Running |      N/A      |
+    +----------+-----------+---------+---------------+
+    ```
 
-若虚拟机IP地址显示为 `N/A` ，若这台虚拟机的状态为 `Running` 则表示这台虚拟机为新创建的虚拟机，网络还未配置完成，网络配置过程大概需要若干秒，请稍后重新尝试获取相关虚拟机信息。
+    若虚拟机IP地址显示为 `N/A` ，若这台虚拟机的状态为 `Running` 则表示这台虚拟机为新创建的虚拟机，网络还未配置完成，网络配置过程大概需要若干秒，请稍后重新尝试获取相关虚拟机信息。
 
 2. 登录虚拟机：
 
-若虚拟机已成功分配到IP地址，可以直接使用 `SSH` 命令进行登录：
+    若虚拟机已成功分配到IP地址，可以直接使用 `SSH` 命令进行登录：
 
-```Shell
-ssh root@{instance_ip}
-```
+    ```Shell
+    ssh root@{instance_ip}
+    ```
 
-若使用的是openEuler社区提供的官方镜像，则默认用户为 `root` 默认密码为 `openEuler12#$`。
+    若使用的是openEuler社区提供的官方镜像，则默认用户为 `root` 默认密码为 `openEuler12#$`。
 
 3. 创建虚拟机。
 
-```Shell
-eulerlauncher launch --image {image_name} {instance_name}
-```
+    ```Shell
+    eulerlauncher launch --image {image_name} {instance_name}
+    ```
 
-通过\-\-image指定镜像，同时指定虚拟机名称。
+    通过\-\-image指定镜像，同时指定虚拟机名称。
 
 4. 删除虚拟机。
 
-```Shell
-eulerlauncher delete-instance {instance_name}
-```
+    ```Shell
+    eulerlauncher delete-instance {instance_name}
+    ```
 
-根据虚拟机名称删除指定的虚拟机。
+    根据虚拟机名称删除指定的虚拟机。
 
-[1]: https://developer.apple.com/documentation/vmnet
+    [1]: https://developer.apple.com/documentation/vmnet
