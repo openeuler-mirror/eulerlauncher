@@ -1,0 +1,10 @@
+label: EulerLauncher 用户指南
+isManual: true
+description: 为开发者提供在主流桌面操作系统上高性能的开发资源
+sections:
+  - label: 概述
+    href: ./overall.md
+  - label: 在 Windows 下安装与运行 EulerLauncher
+    href: ./win_user_manual.md
+  - label: 在 MacOS 下安装与运行 EulerLauncher
+    href: ./mac_user_manual.md
